@@ -347,6 +347,9 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
       <button class="hero-control" id="hero-toggle" type="button" aria-controls="hero-promo" aria-label="紹介動画を再生">
         <span class="hero-symbol" id="hero-toggle-symbol" aria-hidden="true">▶</span><span class="hero-control-label" id="hero-toggle-label">再生</span>
       </button>
+      <button class="hero-control" id="hero-sound" type="button" aria-controls="hero-promo" aria-pressed="false" aria-label="音を出す">
+        <span class="hero-symbol" id="hero-sound-symbol" aria-hidden="true">🔇</span><span class="hero-control-label" id="hero-sound-label">音を出す</span>
+      </button>
       <button class="hero-control" id="hero-fullscreen" type="button" aria-controls="hero-promo" aria-label="紹介動画を全画面で見る" hidden>
         <span class="hero-symbol" aria-hidden="true">⛶</span><span class="hero-control-label">全画面</span>
       </button>
@@ -521,6 +524,15 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
   video.muted=true;
   video.autoplay=wantsPlayback;
   document.getElementById("hero-toolbar").hidden=false;
+  const sound=document.getElementById("hero-sound");
+  sound.addEventListener("click",()=>{
+    video.muted=!video.muted;
+    if(!video.muted){video.volume=.8;if(video.paused){const pl=video.play();if(pl)pl.catch(()=>{})}}
+    sound.setAttribute("aria-pressed",String(!video.muted));
+    document.getElementById("hero-sound-symbol").textContent=video.muted?"🔇":"🔊";
+    document.getElementById("hero-sound-label").textContent=video.muted?"音を出す":"音を消す";
+    sound.setAttribute("aria-label",video.muted?"音を出す":"音を消す");
+  });
   function showState(){
     const playing=!video.paused&&!video.ended;
     symbol.textContent=playing?"Ⅱ":"▶";
