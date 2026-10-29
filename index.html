@@ -121,6 +121,18 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 .chip{display:inline-flex;gap:6px;align-items:center;font-size:.78rem;background:#f4eef2;border-radius:999px;padding:3px 10px;color:var(--ink)}
 .chip b{font-weight:700}.chip.up b{color:var(--up)}.chip.down b{color:var(--down)}
 .muted{color:var(--muted);font-size:.86rem}
+.ana[hidden],.brake[hidden],dd[hidden],dt[hidden]{display:none}
+.ana{border-top:1px dashed #ecd2e0;padding-top:10px;display:flex;flex-direction:column;gap:8px}
+.ana-h{font-weight:700;font-size:.9rem}.ana-h span{font-weight:400;color:var(--muted);font-size:.78rem;margin-left:6px}
+.an{background:#faf6f8;border-radius:8px;padding:8px 10px;font-size:.84rem;display:flex;flex-direction:column;gap:2px}
+.an-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.an-top b{font-weight:700}
+.st{border-radius:999px;padding:1px 10px;font-size:.76rem;font-weight:700;color:#fff;background:var(--doji)}
+.st.bull{background:var(--up)}.st.bear{background:var(--down)}
+.gr{font-size:.72rem;border-radius:4px;padding:1px 6px;background:#eee;color:var(--muted)}
+.gr.ok{background:#e3f4ea;color:#1d7a46}
+.an small{color:var(--muted);font-size:.74rem}
+.ana-warn,.brake{font-size:.76rem;color:var(--muted);margin:0}
+.brake{background:#fff7e6;border-radius:8px;padding:8px 10px;color:#7a5200}
 .gpt{background:#f6f8fa;border-radius:8px;padding:10px 12px;font-size:.84rem}
 .gpt-h{font-size:.74rem;font-weight:700;color:#10a37f;letter-spacing:.04em;margin-bottom:4px}
 .gpt ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
@@ -382,7 +394,16 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
         <dt>日の型</dt><dd><b id="rp-type"></b><br><span class="muted" id="rp-type-text"></span></dd>
         <dt>投資主体</dt><dd><b id="rp-regime"></b><br><span class="muted" id="rp-regime-text"></span></dd>
         <dt>お金の流れ</dt><dd id="rp-rotation"></dd>
+        <dt>日本の中身</dt><dd id="rp-jp"></dd>
+        <dt>海外</dt><dd id="rp-os"></dd>
+        <dt>業種</dt><dd id="rp-sec"></dd>
       </dl>
+      <div class="ana" id="rp-ana" hidden>
+        <div class="ana-h">アナリストたちの見方<span id="rp-ana-count"></span></div>
+        <div id="rp-ana-list"></div>
+        <p class="ana-warn">見方が同じでも、全員が同じ材料（米国株の動きなど）を見ているだけのことがあります。成績が「検証中」「コイン投げ並み」の見方は、当たっていない前提で読んでください。</p>
+      </div>
+      <p class="brake" id="rp-brake"></p>
       <div class="gpt" id="rp-gpt" hidden>
         <div class="gpt-h" id="rp-gpt-h">GPT（市況メモ担当）より</div>
         <ul id="rp-gpt-list"></ul>
@@ -598,7 +619,7 @@ function md(s){if(!s)return"";const[y,m,d]=String(s).slice(0,10).split("-");retu
 let DATA=FALLBACK;
 function renderReport(){
   const d=DATA;
-  $("rp-date").textContent=`${md(d.market_date)} 大引けの地合（AIコクピットより）`;
+  $("rp-date").textContent=`${md(d.market_date)} 大引けの地合${d.edition?`・${d.edition}版`:""}（AIコクピットより）`;
   const chips=[...Object.entries(d.market||{}),...Object.entries(d.us||{}).map(([k,v])=>["米 "+k,v])];
   $("rp-chips").innerHTML=chips.map(([k,v])=>`<span class="chip ${v==="上げ"?"up":v==="下げ"?"down":""}">${esc(k)}<b>${esc(v)}</b></span>`).join("");
   $("rp-type").textContent=d.day_type; $("rp-type-text").textContent=DAY_TEXT[d.day_type]||"";
@@ -606,6 +627,21 @@ function renderReport(){
   $("rp-regime").textContent=rg.title||"未確認";
   $("rp-regime-text").textContent=(rg.text||"")+(rg.stale?`（${md(rg.week_end)}までの週次データなので参考程度です）`:"");
   $("rp-rotation").textContent=d.rotation||"未確認";
+  const row=(id,html)=>{const dd=$(id);dd.innerHTML=html||"";dd.hidden=!html;dd.previousElementSibling.hidden=!html};
+  const jd=d.japan_detail||{};
+  row("rp-jp",Object.keys(jd).length?Object.entries(jd).map(([k,v])=>`<b>${esc(k)}</b>：${esc(v.gap)}、${esc(v.close)}。<br><span class="muted">${esc(v.trend)}</span>`).join("<br>"):"");
+  const os=d.overseas||[];
+  row("rp-os",os.length?os.map(x=>`${esc(x.name)} <b>${esc(x.move)}</b>`).join("／")+(os[0]&&os[0].at?`<br><span class="muted">${esc(md(os[0].at))} ${esc(String(os[0].at).slice(11,16))}時点の値動き</span>`:""):"");
+  const sj=d.sectors_jp||{}, su=d.sectors_us||{}, L=a=>a&&a.length?a.map(esc).join("・"):"なし";
+  row("rp-sec",(sj["流入"]||sj["流出"])?`日本 入る：${L(sj["流入"])}<br>日本 出る：${L(sj["流出"])}<br><span class="muted">米国 入る：${L(su["流入"])}／出る：${L(su["流出"])}</span>`:"");
+  const an=d.analysts;
+  if(an&&an.list&&an.list.length){
+    $("rp-ana").hidden=false;
+    $("rp-ana-count").textContent=`強気${an.count["強気"]}・弱気${an.count["弱気"]}・中立${an.count["中立"]}（${md(an.date)}）`;
+    $("rp-ana-list").innerHTML=an.list.map(a=>`<div class="an"><div class="an-top"><span class="st ${a.stance==="強気"?"bull":a.stance==="弱気"?"bear":""}">${esc(a.stance)}</span><b>${esc(a.name)}</b><span class="gr ${a.grade==="参考になる成績"?"ok":""}">${a.n!=null?`向きの的中 ${a.hits}/${a.n}・${esc(a.grade)}`:"成績なし"}</span><small>${esc(String(a.answered_at||"").slice(11,16))}</small></div>${a.why?`<div>${esc(a.why)}</div>`:""}${a.invalid_if?`<small>外れる合図：${esc(a.invalid_if)}</small>`:""}</div>`).join("");
+  } else $("rp-ana").hidden=true;
+  $("rp-brake").textContent=d.base_rate?`先入観のブレーキ：${d.base_rate}`:"";
+  $("rp-brake").hidden=!d.base_rate;
   if(d.gpt_memo&&d.gpt_memo.length){$("rp-gpt").hidden=false;$("rp-gpt-h").textContent=`GPT（市況メモ担当）より・${md(d.gpt_date)}の報道まとめ`;$("rp-gpt-list").innerHTML=d.gpt_memo.map(x=>`<li>${esc(x.text)}${x.url?` <a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.source||"出典")}</a>`:""}</li>`).join("")}
   else $("rp-gpt").hidden=true;
   $("rp-note").textContent=d.source_note||"";
