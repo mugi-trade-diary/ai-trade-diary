@@ -7,7 +7,7 @@
 <title>MugiのAIトレード日記</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@800&family=Noto+Sans+JP:wght@400;500;700&family=Zen+Antique&display=swap">
 <style>
-/* Layout: shop-style storefront. Pink notice bars, black header, full-width slider, 4-up product cards, then KUU's fortune corner. Single light look on purpose. */
+/* Pink notice bars, black header, full-width promotional film, then the diary series and KUU's fortune corner. */
 :root{
   --pink:#ff1f8f; --pink-soft:#ffe3f1; --black:#0b0b0d; --white:#ffffff; --ink:#1b1b1f; --muted:#6d6870;
   --up:#d6303f; --down:#2a74d0; --doji:#6b7280;
@@ -29,18 +29,47 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 nav{display:flex;gap:22px;flex-wrap:wrap}
 nav a{color:var(--white);text-decoration:none;font-weight:700;font-size:.92rem}
 nav a:hover{color:var(--pink)}
-@media (max-width:560px){nav{gap:14px}nav a{font-size:.82rem}.logo{font-size:1.15rem}}
-.slider{position:relative;background:var(--black);overflow:hidden}
-.slides{display:flex;transition:transform .5s ease}
-.slide{flex:0 0 100%;position:relative;aspect-ratio:15/8;max-height:620px}
-.slide img{width:100%;height:100%;object-fit:cover;display:block}
-.slide .cap{position:absolute;left:4%;top:7%;font-family:var(--logo);color:var(--pink);font-size:clamp(1.3rem,4.4vw,2.8rem);line-height:1.2;
-  text-shadow:0 2px 0 var(--white),0 -2px 0 var(--white),2px 0 0 var(--white),-2px 0 0 var(--white)}
-.arrow{position:absolute;top:50%;transform:translateY(-50%);background:transparent;border:0;color:var(--white);font-size:2rem;cursor:pointer;padding:8px 12px;text-shadow:0 1px 4px rgba(0,0,0,.6)}
-.arrow.l{left:max(4px,env(safe-area-inset-left,0px))}.arrow.r{right:max(4px,env(safe-area-inset-right,0px))}
-.dots{position:absolute;bottom:12px;left:0;right:0;display:flex;justify-content:center;gap:8px}
-.dots button{width:9px;height:9px;border-radius:50%;border:0;padding:0;background:rgba(255,255,255,.45);cursor:pointer}
-.dots button[aria-current="true"]{background:var(--white)}
+@media (max-width:560px){
+  .hd{flex-direction:column;align-items:flex-start;gap:8px;padding-block:12px}
+  .hd .logo{font-size:1.15rem}
+  nav{width:100%;flex-wrap:nowrap;justify-content:space-between;gap:14px}
+  nav a{font-size:.82rem;white-space:nowrap}
+}
+.hero{background:var(--black);color:var(--white);scroll-margin-top:80px}
+.hero-media{position:relative;width:100%;aspect-ratio:16/9;max-height:760px;overflow:hidden;background:#171116}
+.hero-video{display:block;width:100%;height:100%;object-fit:contain;background:#171116}
+.hero-toolbar{position:absolute;right:max(18px,env(safe-area-inset-right,0px));bottom:18px;display:flex;gap:8px;align-items:center}
+.hero-toolbar[hidden]{display:none}
+.hero-control{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:1px solid rgba(255,255,255,.6);border-radius:999px;padding:9px 16px;background:rgba(11,11,13,.78);color:var(--white);font:inherit;font-size:.76rem;font-weight:700;cursor:pointer;backdrop-filter:blur(8px)}
+.hero-control:hover{background:var(--pink);border-color:var(--pink)}
+.hero-control:focus-visible,.hero-link:focus-visible{outline:3px solid var(--white);outline-offset:4px}
+.hero-symbol{font-size:1rem;line-height:1;width:1em;text-align:center}
+.hero-control[hidden]{display:none}
+.hero-caption{max-width:1280px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:24px;padding-top:24px;padding-bottom:28px}
+.hero-kicker{display:block;margin-bottom:7px;color:var(--pink);font-size:.7rem;font-weight:700;letter-spacing:.2em}
+.hero-caption h1{margin:0;font-family:var(--logo);font-size:clamp(1.2rem,2.2vw,1.8rem);line-height:1.5;font-weight:800;letter-spacing:.02em}
+.hero-caption p{margin:6px 0 0;color:#ccc3c9;font-size:.82rem;line-height:1.8}
+.hero-links{display:flex;gap:9px;flex-wrap:wrap;flex:none}
+.hero-link{display:inline-flex;align-items:center;justify-content:center;gap:15px;min-height:44px;border:1px solid #fff;border-radius:999px;padding:10px 20px;color:#fff;text-decoration:none;font-size:.8rem;font-weight:700;white-space:nowrap}
+.hero-link.primary{background:var(--pink);border-color:var(--pink)}
+.hero-link:hover{background:#fff;border-color:#fff;color:var(--black)}
+.hero-status{position:absolute;left:16px;right:16px;top:16px;margin:0;padding:10px 14px;background:rgba(11,11,13,.86);border-radius:6px;color:#fff;font-size:.8rem}
+.hero-status:empty{display:none}
+.hero-noscript{margin:0;padding:10px 16px;color:#ccc3c9;font-size:.8rem}
+@media (max-width:700px){
+  .hero-caption{display:block;padding-top:20px;padding-bottom:24px}
+  .hero-caption h1{font-size:1.28rem}
+  .hero-caption p{max-width:36em;font-size:.8rem}
+  .hero-links{margin-top:16px}
+  .hero-link{padding:10px 17px;font-size:.78rem}
+  .hero-toolbar{right:12px;bottom:12px;gap:6px}
+  .hero-control{padding:8px 12px;font-size:.7rem}
+}
+@media (max-width:420px){
+  .hero-toolbar{bottom:8px;right:8px}
+  .hero-control{min-height:44px;min-width:44px;padding:8px 10px}
+  .hero-control .hero-control-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+}
 .notice{max-width:1100px;margin:0 auto;color:var(--pink);font-size:.76rem;line-height:1.6;padding-block:14px 0}
 .notice b{display:block}
 h2{text-align:center;font-weight:500;font-size:1.3rem;letter-spacing:.08em;margin:18px 0 18px}
@@ -87,25 +116,6 @@ footer{background:var(--black);color:var(--white);padding-block:28px}
 footer .in{max-width:1100px;margin:0 auto;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 footer .logo{font-size:1.1rem}
 footer p{margin:0;font-size:.8rem;color:#c9c4cc}
-@media (prefers-reduced-motion:reduce){.slides{transition:none}}
-.slide{overflow:hidden}
-.slide img{transform-origin:50% 50%}
-@media (prefers-reduced-motion:no-preference){
-.slide.on img{animation:kb 9s ease-in-out infinite alternate}
-.slide:nth-child(2).on img{animation-name:kb2}
-.slide:nth-child(3).on img{animation-name:kb3}
-@keyframes kb{from{transform:scale(1)}to{transform:scale(1.09) translate(1.5%,-1%)}}
-@keyframes kb2{from{transform:scale(1.08) translate(2%,0)}to{transform:scale(1) translate(0,0)}}
-@keyframes kb3{from{transform:scale(1)}to{transform:scale(1.08) translate(-2%,-1%)}}
-.slide.on .cap{animation:capin .9s ease-out both}
-@keyframes capin{from{transform:translateY(14px);opacity:.0}to{transform:none;opacity:1}}
-.glow{position:absolute;border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle,rgba(255,120,200,.75),rgba(255,31,143,0) 70%);animation:pulse 2.4s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:.9;transform:scale(1.1)}}
-.spark{position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 8px 2px rgba(255,160,215,.9);pointer-events:none;animation:fly linear infinite}
-@keyframes fly{from{transform:translateY(0);opacity:0}15%{opacity:1}to{transform:translateY(-120px);opacity:0}}
-}
-.glow,.spark{display:none}
-@media (prefers-reduced-motion:no-preference){.glow,.spark{display:block}}
 .report{background:var(--white);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;border:2px solid var(--pink)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{display:inline-flex;gap:6px;align-items:center;font-size:.78rem;background:#f4eef2;border-radius:999px;padding:3px 10px;color:var(--ink)}
@@ -136,16 +146,35 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
   <nav><a href="#items">商品</a><a href="#uranai">クウの足占い</a><a href="#items">note</a></nav>
 </div></header>
 
-<div class="slider" id="top">
-  <div class="slides" id="slides">
-    <div class="slide"><img src="images/slide-room.jpg" alt="ピンクのトレード部屋に並ぶ4人"><span class="glow" style="left:10%;top:44%;width:13%;aspect-ratio:1"></span><span class="glow" style="left:79%;top:18%;width:9%;aspect-ratio:1;animation-delay:1.2s"></span><div class="cap">3000万円、<br>溶かしました。</div></div>
-    <div class="slide"><img src="images/slide-kuu-mugi.jpg" alt="水晶玉を持つクウとPCを見るムギ"><div class="cap">それでも、<br>記録はつける。</div></div>
-    <div class="slide"><img src="images/slide-hamu-meru.jpg" alt="マグを持つハムと眼鏡のメル"><div class="cap">AIが3人、<br>ついてきた。</div></div>
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="hero-media">
+    <video class="hero-video" id="hero-promo" controls muted loop playsinline preload="metadata" poster="images/hero-promo-poster.jpg" aria-label="AIトレード日記の紹介動画。男性の主人公ムギと、女性AIのメル・クウ・ハムが、トレードの記録、動画、note、クウの足占いを紹介します。">
+      <source src="videos/ai-trade-diary-promo.mp4" type="video/mp4">
+      <p>ムギと3人の女性AIのトレード日記、動画、note、クウの足占いをご紹介します。</p>
+    </video>
+    <div class="hero-toolbar" id="hero-toolbar" hidden>
+      <button class="hero-control" id="hero-toggle" type="button" aria-controls="hero-promo" aria-label="紹介動画を再生">
+        <span class="hero-symbol" id="hero-toggle-symbol" aria-hidden="true">▶</span><span class="hero-control-label" id="hero-toggle-label">再生</span>
+      </button>
+      <button class="hero-control" id="hero-fullscreen" type="button" aria-controls="hero-promo" aria-label="紹介動画を全画面で見る" hidden>
+        <span class="hero-symbol" aria-hidden="true">⛶</span><span class="hero-control-label">全画面</span>
+      </button>
+    </div>
+    <p class="hero-status" id="hero-status" role="status"></p>
   </div>
-  <button class="arrow l" id="prev" aria-label="前へ">‹</button>
-  <button class="arrow r" id="next" aria-label="次へ">›</button>
-  <div class="dots" id="dots"></div>
-</div>
+  <div class="hero-caption gut">
+    <div>
+      <span class="hero-kicker">MUGI'S AI TRADE DIARY</span>
+      <h1 id="hero-title">投資と再起を、記録する。</h1>
+      <p>3000万円を失ったムギと、3人の女性AI。<br>日々の振り返り、動画、note。そして、クウの足占い。</p>
+    </div>
+    <div class="hero-links">
+      <a class="hero-link primary" href="#items">日記・noteを見る <span aria-hidden="true">↗</span></a>
+      <a class="hero-link" href="#uranai">クウの足占い <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+  <noscript><p class="hero-noscript">紹介動画は再生ボタンからご覧いただけます。</p></noscript>
+</section>
 
 <div class="notice gut"><b>お知らせ</b>ここに出てくる金額はすべて本人の実際の記録から計算しています。分からない数字は「未確認」と書きます。占いは娯楽です。</div>
 
@@ -228,14 +257,76 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 </div></footer>
 
 <script>
-/* slider */
-const S=document.getElementById("slides"), N=S.children.length, D=document.getElementById("dots"); let cur=0, timer;
-for(let i=0;i<N;i++){const b=document.createElement("button");b.setAttribute("aria-label",`${i+1}枚目`);b.onclick=()=>go(i,true);D.appendChild(b)}
-function sparks(){document.querySelectorAll(".slide").forEach(s=>{for(let i=0;i<10;i++){const e=document.createElement("span");e.className="spark";e.style.left=(5+Math.random()*90)+"%";e.style.top=(40+Math.random()*55)+"%";e.style.animationDuration=(3+Math.random()*4)+"s";e.style.animationDelay=(-Math.random()*6)+"s";const z=.5+Math.random();e.style.width=e.style.height=(4*z)+"px";s.appendChild(e)}})}
-sparks();
-function go(i,user){cur=(i+N)%N;S.style.transform=`translateX(-${cur*100}%)`;[...S.children].forEach((s,j)=>s.classList.toggle("on",j===cur));[...D.children].forEach((b,j)=>b.setAttribute("aria-current",j===cur));if(user)restart()}
-function restart(){clearInterval(timer);if(!matchMedia("(prefers-reduced-motion: reduce)").matches)timer=setInterval(()=>go(cur+1),7000)}
-document.getElementById("prev").onclick=()=>go(cur-1,true);document.getElementById("next").onclick=()=>go(cur+1,true);go(0);restart();
+/* Promotional film. Playback starts only after the visitor's motion preference is known. */
+(()=>{
+  const video=document.getElementById("hero-promo"), toggle=document.getElementById("hero-toggle"), fullscreen=document.getElementById("hero-fullscreen");
+  const symbol=document.getElementById("hero-toggle-symbol"), label=document.getElementById("hero-toggle-label"), status=document.getElementById("hero-status");
+  const motion=matchMedia("(prefers-reduced-motion: reduce)");
+  let wantsPlayback=!motion.matches, failed=false;
+  const initialRect=video.getBoundingClientRect();
+  let inView=initialRect.bottom>0&&initialRect.top<innerHeight;
+  video.controls=false;
+  video.muted=true;
+  video.autoplay=wantsPlayback;
+  document.getElementById("hero-toolbar").hidden=false;
+  function showState(){
+    const playing=!video.paused&&!video.ended;
+    symbol.textContent=playing?"Ⅱ":"▶";
+    label.textContent=playing?"一時停止":"再生";
+    toggle.setAttribute("aria-label",playing?"紹介動画を一時停止":"紹介動画を再生");
+  }
+  function syncPlayback(){
+    if(wantsPlayback&&inView&&!document.hidden&&!failed){
+      const play=video.play();
+      if(play&&typeof play.catch==="function")play.catch(()=>{showState()});
+    }else video.pause();
+  }
+  toggle.addEventListener("click",()=>{
+    wantsPlayback=video.paused;
+    status.textContent="";
+    syncPlayback();
+  });
+  video.addEventListener("play",()=>{if(video.controls)wantsPlayback=true;showState()});
+  video.addEventListener("pause",()=>{if(video.controls&&inView&&!document.hidden)wantsPlayback=false;showState()});
+  video.addEventListener("loadeddata",()=>{status.textContent="";syncPlayback()});
+  video.addEventListener("error",()=>{
+    failed=true;
+    wantsPlayback=false;
+    toggle.hidden=true;
+    fullscreen.hidden=true;
+    status.textContent="紹介動画を読み込めませんでした。日記・note・占いは下のリンクからご覧いただけます。";
+  });
+  const source=video.querySelector("source");
+  if(source)source.addEventListener("error",()=>video.dispatchEvent(new Event("error")));
+  document.addEventListener("visibilitychange",syncPlayback);
+  const onMotionChange=()=>{
+    wantsPlayback=false;
+    video.autoplay=false;
+    syncPlayback();
+  };
+  if(motion.addEventListener)motion.addEventListener("change",onMotionChange);
+  else if(motion.addListener)motion.addListener(onMotionChange);
+  if("IntersectionObserver" in window){
+    new IntersectionObserver(entries=>{
+      inView=entries[0].isIntersecting;
+      syncPlayback();
+    },{threshold:.2}).observe(video);
+  }
+  if(video.requestFullscreen||video.webkitEnterFullscreen){
+    fullscreen.hidden=false;
+    fullscreen.addEventListener("click",()=>{
+      try{
+        video.controls=true;
+        const request=video.requestFullscreen?video.requestFullscreen():video.webkitEnterFullscreen();
+        if(request&&typeof request.catch==="function")request.catch(()=>{video.controls=false});
+      }catch(_){video.controls=false}
+    });
+    document.addEventListener("fullscreenchange",()=>{video.controls=document.fullscreenElement===video});
+    video.addEventListener("webkitendfullscreen",()=>{video.controls=false});
+  }
+  showState();
+  syncPlayback();
+})();
 
 /* fortune */
 const FALLBACK={"built_at": "2026-10-29T19:15+09:00", "market_date": "2026-10-28", "market": {"日経平均": "上げ", "TOPIX": "ほぼ横ばい", "グロース250": "上げ"}, "us": {"NASDAQ": "上げ", "SOX（半導体）": "上げ"}, "day_type": "レンジ", "regime": {"title": "くばり相場の週", "text": "海外勢が売って、個人が買っている組み合わせです。上がっても、誰かが静かに降りている週です。", "week_end": "2026-09-11", "stale": true}, "rotation": "グロースからバリュー・資本財へ", "gpt_memo": [{"text": "前引けでは日経平均が続伸、TOPIXは下落。鉱業・電気ガス・医薬品が上昇し、電気機器・機械などは下落と報道された。", "source": "午前の市況・OANDA", "url": "https://www.oanda.jp/lab-education/market_news/mn_1041239_202610291157/"}, {"text": "後場寄り付きでは日経平均が下げに転じたと報道された。", "source": "株探・13:02配信", "url": "https://s.kabutan.jp/news/n202610290743/"}, {"text": "大引け時点の両指数・業種動向は未確認。", "source": null, "url": null}], "gpt_date": "2026-10-29", "source_note": "AIコクピットの大引け後データから、向きと型の名前だけを使っています。数値・銘柄は載せていません。"};
