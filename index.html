@@ -106,6 +106,20 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 }
 .glow,.spark{display:none}
 @media (prefers-reduced-motion:no-preference){.glow,.spark{display:block}}
+.report{background:var(--white);border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;gap:12px;border:2px solid var(--pink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;gap:6px;align-items:center;font-size:.78rem;background:#f4eef2;border-radius:999px;padding:3px 10px;color:var(--ink)}
+.chip b{font-weight:700}.chip.up b{color:var(--up)}.chip.down b{color:var(--down)}
+.muted{color:var(--muted);font-size:.86rem}
+.gpt{background:#f6f8fa;border-radius:8px;padding:10px 12px;font-size:.84rem}
+.gpt-h{font-size:.74rem;font-weight:700;color:#10a37f;letter-spacing:.04em;margin-bottom:4px}
+.gpt ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
+.gpt a{color:var(--down);font-size:.78rem}
+.fine{font-size:.72rem;color:var(--muted);margin:0}
+.mytype{background:var(--pink-soft);border-radius:8px;padding:10px 12px}
+.mytype .lbl{display:block;font-size:.72rem;color:var(--muted)}
+.mytype b{font-size:1.15rem;color:var(--pink)}
+.mytype p{margin:2px 0 0;font-size:.86rem}
 </style>
 </head>
 <body>
@@ -149,18 +163,39 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 
 <section class="uranai gut" id="uranai">
   <div class="ur">
-    <h2>クウの足占い<small>生年月日から、今日のあなたを日足1本で《報告》します</small></h2>
+    <h2>クウの足占い<small>AIコクピットの地合データと、あなたの生年月日で占います</small></h2>
+
+    <div class="report" id="report" aria-live="polite">
+      <div class="who"><img class="av" src="images/icon-kuu.jpg" alt=""><div><b>クウの地合レポート</b><br><span id="rp-date">読み込み中…</span></div></div>
+      <div class="chips" id="rp-chips"></div>
+      <dl>
+        <dt>日の型</dt><dd><b id="rp-type"></b><br><span class="muted" id="rp-type-text"></span></dd>
+        <dt>投資主体</dt><dd><b id="rp-regime"></b><br><span class="muted" id="rp-regime-text"></span></dd>
+        <dt>お金の流れ</dt><dd id="rp-rotation"></dd>
+      </dl>
+      <div class="gpt" id="rp-gpt" hidden>
+        <div class="gpt-h" id="rp-gpt-h">GPT（市況メモ担当）より</div>
+        <ul id="rp-gpt-list"></ul>
+      </div>
+      <p class="fine" id="rp-note"></p>
+    </div>
+
     <form id="f">
       <label for="birth">生年月日<input id="birth" type="date" value="1985-04-12" required></label>
       <button class="btn" type="submit">占ってもらう</button>
     </form>
+
     <div class="reading" id="reading" aria-live="polite">
       <div class="who"><img class="av" src="images/icon-kuu.jpg" alt=""><div><b>クウ</b><br><span>占い担当AI《占報》</span></div></div>
+      <div class="mytype"><span class="lbl">あなたの型</span><b id="my-type"></b><p id="my-type-text"></p></div>
       <div class="top">
         <svg id="candle" viewBox="0 0 60 104" role="img" aria-label="今日の足"></svg>
         <div><div class="date" id="date"></div><div class="verdict" id="verdict"></div><p class="sub" id="sub"></p></div>
       </div>
       <dl>
+        <dt>地合との相性</dt><dd><span class="meter" id="match"></span><br><span id="match-text"></span></dd>
+        <dt>前場</dt><dd id="am"></dd>
+        <dt>後場</dt><dd id="pm"></dd>
         <dt>やらかし度</dt><dd class="meter" id="risk"></dd>
         <dt>今日の戒め</dt><dd id="rule"></dd>
         <dt>近づくな</dt><dd id="avoid"></dd>
@@ -175,6 +210,7 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
       <button class="btn" type="button" id="copy">結果をコピー</button>
     </div>
     <div class="toast" id="toast"></div>
+    <p class="fine">占いは娯楽です。地合レポートは前の営業日の大引け後のデータで、向きと型の名前だけを載せています。銘柄や売買のタイミングはお伝えしていません。</p>
   </div>
 </section>
 
@@ -194,24 +230,48 @@ function restart(){clearInterval(timer);if(!matchMedia("(prefers-reduced-motion:
 document.getElementById("prev").onclick=()=>go(cur-1,true);document.getElementById("next").onclick=()=>go(cur+1,true);go(0);restart();
 
 /* fortune */
+const FALLBACK={"built_at": "2026-10-29T19:15+09:00", "market_date": "2026-10-28", "market": {"日経平均": "上げ", "TOPIX": "ほぼ横ばい", "グロース250": "上げ"}, "us": {"NASDAQ": "上げ", "SOX（半導体）": "上げ"}, "day_type": "レンジ", "regime": {"title": "くばり相場の週", "text": "海外勢が売って、個人が買っている組み合わせです。上がっても、誰かが静かに降りている週です。", "week_end": "2026-09-11", "stale": true}, "rotation": "グロースからバリュー・資本財へ", "gpt_memo": [{"text": "前引けでは日経平均が続伸、TOPIXは下落。鉱業・電気ガス・医薬品が上昇し、電気機器・機械などは下落と報道された。", "source": "午前の市況・OANDA", "url": "https://www.oanda.jp/lab-education/market_news/mn_1041239_202610291157/"}, {"text": "後場寄り付きでは日経平均が下げに転じたと報道された。", "source": "株探・13:02配信", "url": "https://s.kabutan.jp/news/n202610290743/"}, {"text": "大引け時点の両指数・業種動向は未確認。", "source": null, "url": null}], "gpt_date": "2026-10-29", "source_note": "AIコクピットの大引け後データから、向きと型の名前だけを使っています。数値・銘柄は載せていません。"};
+const TYPES=["上昇トレンド","寄り底","レンジ","寄り天","下落継続"];
+const DAY_TEXT={"上昇トレンド":"素直に上へ流れた日でした。","寄り底":"朝に下げて、そこから戻した日でした。","レンジ":"上にも下にも行けず、もみ合った日でした。","寄り天":"朝がいちばん高く、そのあと下げた日でした。","下落継続":"一日中、下へ流れた日でした。","未確認":"日の型はまだ確かめられていません。"};
+const MY_TEXT={"上昇トレンド":"乗ったら降りない人。粘り強いけれど、降り遅れやすい。","寄り底":"最初に一回へこむけど、そこから戻る人。敵は朝の焦り。","レンジ":"行ったり来たりの人。考えすぎて固まりやすい。","寄り天":"朝いちばんが最高潮の人。昼にはしぼみやすい。","下落継続":"悪い流れに気づいても止められない人。止める仕組みが味方。"};
+const TYPE_RULE={"上昇トレンド":"浮かれて量を増やさない。","寄り底":"朝の下げでパニックにならない。","レンジ":"回数を増やさない。今日は少なく。","寄り天":"朝の勢いに飛びつかない。","下落継続":"取り返そうとしない。負けが3万円に届いたら閉じる。"};
 const FORTUNES=[
-  {k:"大陽線",c:"up",o:20,cl:95,h:100,l:15,s:"《報告》朝から晩まで上向きです。浮かれた瞬間が天井です。"},
-  {k:"陽線",c:"up",o:40,cl:80,h:90,l:30,s:"《報告》じわじわ良い日です。欲を出さなければ。"},
-  {k:"下ヒゲ陽線",c:"up",o:55,cl:75,h:82,l:12,s:"《報告》一度ヒヤッとしますが、慌てなければ戻ります。"},
-  {k:"十字線",c:"doji",o:55,cl:56,h:88,l:22,s:"《報告》迷いの日です。迷ったら、何もしないのが正解です。"},
-  {k:"上ヒゲ陰線",c:"down",o:60,cl:42,h:96,l:35,s:"《報告》一瞬いい夢を見て、そのあと現実が来ます。"},
+  {k:"大陰線",c:"down",o:95,cl:15,h:98,l:8,s:"《報告》コツコツドカンの「ドカン」側です。画面を閉じる勇気を。"},
   {k:"陰線",c:"down",o:78,cl:38,h:85,l:30,s:"《報告》静かな下り坂です。今日は守りの日。"},
-  {k:"大陰線",c:"down",o:95,cl:15,h:98,l:8,s:"《報告》コツコツドカンの「ドカン」側です。画面を閉じる勇気を。"}
+  {k:"上ヒゲ陰線",c:"down",o:60,cl:42,h:96,l:35,s:"《報告》一瞬いい夢を見て、そのあと現実が来ます。"},
+  {k:"十字線",c:"doji",o:55,cl:56,h:88,l:22,s:"《報告》迷いの日です。迷ったら、何もしないのが正解です。"},
+  {k:"下ヒゲ陽線",c:"up",o:55,cl:75,h:82,l:12,s:"《報告》一度ヒヤッとしますが、慌てなければ戻ります。"},
+  {k:"陽線",c:"up",o:40,cl:80,h:90,l:30,s:"《報告》じわじわ良い日です。欲を出さなければ。"},
+  {k:"大陽線",c:"up",o:20,cl:95,h:100,l:15,s:"《報告》かみ合いすぎています。浮かれた瞬間が天井です。"}
 ];
-const RULES=["入ったら、すぐ逆指値。","1回の損は1万円まで。","今日の負けが3万円に届いたら、閉じる。","取り返そうとした瞬間が一番危ない。","入る前に、損切り位置を声に出す。","3連敗したら、30分散歩。","昼休みに予定外の売買をしない。","ナンピンしたくなったら、水を一杯。"];
+const MATCH_TEXT=["地合とあなたの型が真逆です。今日は見るだけの日。","ずれています。自分のリズムを信じすぎないこと。","半分かみ合っています。ルールどおりなら悪くない。","よくかみ合っています。だからこそ量は増やさない。","ぴったりです。こういう日ほど、最初に決めた損切りを守って。"];
+const SESSION=["集中できる時間","ふつう","休むが吉"];
+const RULES=["入ったら、すぐ逆指値。","1回の損は1万円まで。","今日の負けが3万円に届いたら、閉じる。","取り返そうとした瞬間が一番危ない。","入る前に、損切り位置を声に出す。","3連敗したら、30分散歩。"];
 const AVOID=["寄り付き直後の飛びつき","SNSで話題の急騰","「今日中に取り返す」という考え","引け間際の勢い任せ","負けた直後の倍張り","深夜の反省会"];
-const MUGI=["この占いの的中率は検証していない。でも戒めのほうは過去の記録どおりだ。","占いに根拠はない。負けを3万で止めるルールには根拠がある。","勝ち数と利益は別の欄だ。今日も忘れるな。","《記録》「今日は勝てる日」と言った回数、今年47回。","感情で入った取引は、だいたい負けてる。記録がそう言ってる。","足の形より、損切りを置いたかどうかを見ろ。"];
+const MERU=["占いの的中率は検証していません。でも戒めのほうは、ムギの記録どおりです。","占いに根拠はありません。負けを3万で止めるルールには根拠があります。","勝ち数と利益は別の欄です。今日も忘れずに。","《記録》ムギが「今日は勝てる日」と言った回数、今年47回。","感情で入った取引は、だいたい負けています。記録がそう言っています。","足の形より、損切りを置いたかどうかを見てください。"];
 const HAMU=["10時台に一回立って、のびー！ってしよ！","お昼ごはんは絶対ぬかないでね！","チャートを見ない30分、つくってみよ？","今日の記録、1行だけ書いたらえらい！","窓あけて、空気いれかえよー！","寝る前に今日の数字、ちゃんと見てあげよ。","あったかい飲みもの用意してから座ろ！"];
 const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function hash(str){let h=2166136261;for(const ch of str){h^=ch.codePointAt(0);h=Math.imul(h,16777619)}return h>>>0}
 function rng(seed){let s=seed||1;return()=>{s^=s<<13;s^=s>>>17;s^=s<<5;return(s>>>0)/4294967296}}
 function today(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
 function pick(r,a){return a[Math.floor(r()*a.length)]}
+function md(s){if(!s)return"";const[y,m,d]=String(s).slice(0,10).split("-");return `${+m}/${+d}`}
+let DATA=FALLBACK;
+function renderReport(){
+  const d=DATA;
+  $("rp-date").textContent=`${md(d.market_date)} 大引けの地合（AIコクピットより）`;
+  const chips=[...Object.entries(d.market||{}),...Object.entries(d.us||{}).map(([k,v])=>["米 "+k,v])];
+  $("rp-chips").innerHTML=chips.map(([k,v])=>`<span class="chip ${v==="上げ"?"up":v==="下げ"?"down":""}">${esc(k)}<b>${esc(v)}</b></span>`).join("");
+  $("rp-type").textContent=d.day_type; $("rp-type-text").textContent=DAY_TEXT[d.day_type]||"";
+  const rg=d.regime||{};
+  $("rp-regime").textContent=rg.title||"未確認";
+  $("rp-regime-text").textContent=(rg.text||"")+(rg.stale?`（${md(rg.week_end)}までの週次データなので参考程度です）`:"");
+  $("rp-rotation").textContent=d.rotation||"未確認";
+  if(d.gpt_memo&&d.gpt_memo.length){$("rp-gpt").hidden=false;$("rp-gpt-h").textContent=`GPT（市況メモ担当）より・${md(d.gpt_date)}の報道まとめ`;$("rp-gpt-list").innerHTML=d.gpt_memo.map(x=>`<li>${esc(x.text)}${x.url?` <a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.source||"出典")}</a>`:""}</li>`).join("")}
+  else $("rp-gpt").hidden=true;
+  $("rp-note").textContent=d.source_note||"";
+}
 function drawCandle(f){
   const y=v=>100-v*.92, col=`var(--${f.c})`, top=Math.max(f.o,f.cl), bot=Math.min(f.o,f.cl), body=Math.max((top-bot)*.92,2);
   $("candle").innerHTML=`<line x1="30" x2="30" y1="${y(f.h)}" y2="${y(f.l)}" stroke="${col}" stroke-width="2"/><rect x="18" y="${y(top)}" width="24" height="${body}" fill="${col}"/>`;
@@ -221,14 +281,24 @@ let shareText="";
 function run(){
   const b=$("birth").value; if(!b) return;
   const d=today(), r=rng(hash(b+"|"+d));
-  const f=pick(r,FORTUNES), risk=1+Math.floor(r()*5), rule=pick(r,RULES), avoid=pick(r,AVOID);
-  const meter="●".repeat(risk)+"○".repeat(5-risk);
-  $("date").textContent=d.replaceAll("-","/")+" の足";
+  const my=TYPES[hash(b)%5], dt=TYPES.includes(DATA.day_type)?DATA.day_type:"レンジ";
+  const gap=Math.abs(TYPES.indexOf(my)-TYPES.indexOf(dt)), dist=Math.min(gap,5-gap);
+  let score=[4,2,1][dist]+Math.floor(r()*3)-1; score=Math.max(0,Math.min(4,score));
+  const f=FORTUNES[Math.max(0,Math.min(6,score+Math.floor(r()*3)))];
+  const risk=Math.max(1,Math.min(5,5-score+Math.floor(r()*2)));
+  const rule=r()<.5?TYPE_RULE[dt]:pick(r,RULES), avoid=pick(r,AVOID);
+  const am=pick(r,SESSION), pm=am==="休むが吉"?pick(r,SESSION.slice(0,2)):pick(r,SESSION);
+  const meter="●".repeat(risk)+"○".repeat(5-risk), stars="★".repeat(score+1)+"☆".repeat(4-score);
+  $("my-type").textContent=my+"型"; $("my-type-text").textContent=MY_TEXT[my];
+  $("date").textContent=d.replaceAll("-","/")+" のあなたの足";
   $("verdict").textContent=f.k; $("verdict").className="verdict "+f.c;
-  $("sub").textContent=f.s; $("risk").textContent=meter; $("rule").textContent=rule; $("avoid").textContent=avoid;
-  $("mugi").textContent=pick(r,MUGI); $("hamu").textContent=pick(r,HAMU);
+  $("sub").textContent=f.s;
+  $("match").textContent=stars; $("match-text").textContent=`前の日は「${dt}」。あなたは「${my}型」。${MATCH_TEXT[score]}`;
+  $("am").textContent=am; $("pm").textContent=pm;
+  $("risk").textContent=meter; $("rule").textContent=rule; $("avoid").textContent=avoid;
+  $("mugi").textContent=pick(r,MERU); $("hamu").textContent=pick(r,HAMU);
   drawCandle(f);
-  shareText=`クウの足占い、今日の私は「${f.k}」\nやらかし度 ${meter}\n戒め：${rule}\n\n#クウの足占い\n売買の勧めではありません。記録です。`;
+  shareText=`クウの足占い、今日の私は「${f.k}」\n${my}型 × 地合「${dt}」 相性${stars}\nやらかし度 ${meter}\n戒め：${rule}\n\n#クウの足占い\n売買の勧めではありません。記録です。`;
   $("share").href="https://twitter.com/intent/tweet?text="+encodeURIComponent(shareText);
 }
 $("f").addEventListener("submit",e=>{e.preventDefault();try{localStorage.setItem("birth",$("birth").value)}catch(_){};run()});
@@ -237,7 +307,8 @@ $("copy").addEventListener("click",()=>{
   try{navigator.clipboard.writeText(shareText).then(ok,ng)}catch(_){ng()}
 });
 try{const v=localStorage.getItem("birth");if(v)$("birth").value=v}catch(_){}
-run();
+renderReport(); run();
+fetch("data/today.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(j=>{DATA=j;renderReport();run()}).catch(()=>{});
 </script>
 
 </body>
