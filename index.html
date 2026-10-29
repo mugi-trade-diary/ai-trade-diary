@@ -120,6 +120,8 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 .mytype .lbl{display:block;font-size:.72rem;color:var(--muted)}
 .mytype b{font-size:1.15rem;color:var(--pink)}
 .mytype p{margin:2px 0 0;font-size:.86rem}
+.meishiki{border-top:0;padding-top:0}
+.meishiki b{font-weight:700}
 </style>
 </head>
 <body>
@@ -188,6 +190,12 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
     <div class="reading" id="reading" aria-live="polite">
       <div class="who"><img class="av" src="images/icon-kuu.jpg" alt=""><div><b>クウ</b><br><span>占い担当AI《占報》</span></div></div>
       <div class="mytype"><span class="lbl">あなたの型</span><b id="my-type"></b><p id="my-type-text"></p></div>
+      <dl class="meishiki">
+        <dt>本命星</dt><dd><b id="ms-star"></b><br><span class="muted" id="ms-star-text"></span></dd>
+        <dt>生まれ日</dt><dd><b id="ms-birth"></b><br><span class="muted" id="ms-birth-text"></span></dd>
+        <dt>今日</dt><dd><b id="ms-today"></b><br><span class="muted" id="ms-rel"></span></dd>
+        <dt>月</dt><dd><b id="ms-moon"></b><br><span class="muted" id="ms-moon-text"></span></dd>
+      </dl>
       <div class="top">
         <svg id="candle" viewBox="0 0 60 104" role="img" aria-label="今日の足"></svg>
         <div><div class="date" id="date"></div><div class="verdict" id="verdict"></div><p class="sub" id="sub"></p></div>
@@ -210,7 +218,7 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
       <button class="btn" type="button" id="copy">結果をコピー</button>
     </div>
     <div class="toast" id="toast"></div>
-    <p class="fine">占いは娯楽です。地合レポートは前の営業日の大引け後のデータで、向きと型の名前だけを載せています。銘柄や売買のタイミングはお伝えしていません。</p>
+    <p class="fine">占いは娯楽です。相場の上げ下げや、売り買いの時期を占うものではありません。投資の判断には使わないでください。生年月日はこの端末の中だけで計算し、どこにも送りません。地合レポートは前の営業日の大引け後のデータで、向きと型の名前だけを載せています。銘柄や売買のタイミングはお伝えしていません。</p>
   </div>
 </section>
 
@@ -277,19 +285,45 @@ function drawCandle(f){
   $("candle").innerHTML=`<line x1="30" x2="30" y1="${y(f.h)}" y2="${y(f.l)}" stroke="${col}" stroke-width="2"/><rect x="18" y="${y(top)}" width="24" height="${body}" fill="${col}"/>`;
   $("candle").setAttribute("aria-label","今日の足："+f.k);
 }
+/* 本格占い：干支（四柱推命の日干）・九星・月の満ち欠け。計算はすべて端末内。 */
+const STEMS=["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"], BRANCHES=["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+const ELEM=["木","木","火","火","土","土","金","金","水","水"];
+const STEM_TEXT={"甲":"まっすぐ伸びる大木。決めたら曲げない。","乙":"しなやかな草花。折れずに受け流す。","丙":"照らす太陽。明るさで場を動かす。","丁":"灯す火。静かに一点を見つめる。","戊":"どっしりした山。動かないことが強さ。","己":"耕された畑。こつこつ育てる。","庚":"鍛えた鉄。白黒はっきりつける。","辛":"磨いた宝石。細部にこだわる。","壬":"流れる大河。大きく動いて大きく考える。","癸":"しみこむ雨。目立たず、深く効く。"};
+const STARS=["一白水星","二黒土星","三碧木星","四緑木星","五黄土星","六白金星","七赤金星","八白土星","九紫火星"];
+const STAR_TEXT=["柔らかく、どこにでも入っていける人。","支えるのが得意。じっくり型。","思い立ったらすぐ動く。音と言葉に強い。","人当たりがよく、調整役になる。","中心に立つ人。良くも悪くも影響が大きい。","責任感が強く、上を目指す。","楽しませ上手。話で人を動かす。","変化に強い。立て直しの名人。","ひらめきの人。見抜く目を持つ。"];
+const GEN={木:"火",火:"土",土:"金",金:"水",水:"木"}, CTL={木:"土",土:"水",水:"火",火:"金",金:"木"};
+const REL={
+  "比和":{d:0,t:"同じ気の日。自分らしく動けるけれど、意地も張りやすい。"},
+  "生我":{d:1,t:"今日の気があなたを助ける日。人の話を素直に聞くと良い流れ。"},
+  "我生":{d:0,t:"あなたの気が外へ出ていく日。出しすぎて疲れないように。"},
+  "我剋":{d:0,t:"自分から動きたくなる日。手を広げすぎないのが吉。"},
+  "剋我":{d:-1,t:"試される日。決めた約束ごとを守るだけで十分。"}
+};
+const MOON=[[1.8,"新月","始まりの月。新しい決めごとを1つだけ。"],[5.5,"三日月","芽が出る月。小さく試す。"],[9.2,"上弦へ","形になる月。続けるかどうか見極める。"],[12.9,"上弦の月","迷いが出る月。半分で止める勇気。"],[16.6,"満月","満ちる月。気持ちが大きくなりやすい。"],[20.3,"居待月","手放す月。いらない習慣を1つやめる。"],[24.0,"下弦の月","整える月。記録を見返す。"],[27.7,"有明月","休む月。次の新月まで力をためる。"],[30,"新月","始まりの月。新しい決めごとを1つだけ。"]];
+function dayIndex(iso){const [y,m,d]=iso.split("-").map(Number);return Math.round((Date.UTC(y,m-1,d)-Date.UTC(1900,0,1))/864e5)}
+function kanshi(iso){const n=((dayIndex(iso)+10)%60+60)%60;return {stem:STEMS[n%10],branch:BRANCHES[n%12],elem:ELEM[n%10]}}
+function honmei(iso){const [y,m,d]=iso.split("-").map(Number);let yy=(m<2||(m===2&&d<4))?y-1:y;let s=String(yy).split("").reduce((a,c)=>a+ +c,0);while(s>9)s=String(s).split("").reduce((a,c)=>a+ +c,0);let k=11-s;if(k>9)k-=9;return k-1}
+function relation(me,day){if(me===day)return"比和";if(GEN[day]===me)return"生我";if(GEN[me]===day)return"我生";if(CTL[me]===day)return"我剋";return"剋我"}
+function moonAge(iso){const [y,m,d]=iso.split("-").map(Number);const days=(Date.UTC(y,m-1,d,3)-Date.UTC(2000,0,6,18,14))/864e5;return((days%29.530589)+29.530589)%29.530589}
 let shareText="";
 function run(){
   const b=$("birth").value; if(!b) return;
   const d=today(), r=rng(hash(b+"|"+d));
   const my=TYPES[hash(b)%5], dt=TYPES.includes(DATA.day_type)?DATA.day_type:"レンジ";
   const gap=Math.abs(TYPES.indexOf(my)-TYPES.indexOf(dt)), dist=Math.min(gap,5-gap);
-  let score=[4,2,1][dist]+Math.floor(r()*3)-1; score=Math.max(0,Math.min(4,score));
+  const bk=kanshi(b), tk=kanshi(d), rel=relation(bk.elem,tk.elem), star=honmei(b), age=moonAge(d);
+  const moon=MOON.find(x=>age<x[0]);
+  let score=[4,2,1][dist]+REL[rel].d+Math.floor(r()*2)-(r()<.3?1:0); score=Math.max(0,Math.min(4,score));
   const f=FORTUNES[Math.max(0,Math.min(6,score+Math.floor(r()*3)))];
   const risk=Math.max(1,Math.min(5,5-score+Math.floor(r()*2)));
   const rule=r()<.5?TYPE_RULE[dt]:pick(r,RULES), avoid=pick(r,AVOID);
   const am=pick(r,SESSION), pm=am==="休むが吉"?pick(r,SESSION.slice(0,2)):pick(r,SESSION);
   const meter="●".repeat(risk)+"○".repeat(5-risk), stars="★".repeat(score+1)+"☆".repeat(4-score);
   $("my-type").textContent=my+"型"; $("my-type-text").textContent=MY_TEXT[my];
+  $("ms-star").textContent=STARS[star]; $("ms-star-text").textContent=STAR_TEXT[star];
+  $("ms-birth").textContent=`${bk.stem}${bk.branch}の日（${bk.stem}＝${bk.elem}の気）`; $("ms-birth-text").textContent=STEM_TEXT[bk.stem];
+  $("ms-today").textContent=`${tk.stem}${tk.branch}の日（${tk.elem}の気）× あなたの${bk.elem}＝${rel}`; $("ms-rel").textContent=REL[rel].t;
+  $("ms-moon").textContent=`${moon[1]}（月齢${age.toFixed(1)}）`; $("ms-moon-text").textContent=moon[2];
   $("date").textContent=d.replaceAll("-","/")+" のあなたの足";
   $("verdict").textContent=f.k; $("verdict").className="verdict "+f.c;
   $("sub").textContent=f.s;
@@ -298,7 +332,7 @@ function run(){
   $("risk").textContent=meter; $("rule").textContent=rule; $("avoid").textContent=avoid;
   $("mugi").textContent=pick(r,MERU); $("hamu").textContent=pick(r,HAMU);
   drawCandle(f);
-  shareText=`クウの足占い、今日の私は「${f.k}」\n${my}型 × 地合「${dt}」 相性${stars}\nやらかし度 ${meter}\n戒め：${rule}\n\n#クウの足占い\n売買の勧めではありません。記録です。`;
+  shareText=`クウの足占い、今日の私は「${f.k}」\n${my}型 × 地合「${dt}」 相性${stars}\n${bk.stem}の人×${tk.stem}${tk.branch}の日＝${rel}・${moon[1]}\nやらかし度 ${meter}\n戒め：${rule}\n\n#クウの足占い\n売買の勧めではありません。記録です。`;
   $("share").href="https://twitter.com/intent/tweet?text="+encodeURIComponent(shareText);
 }
 $("f").addEventListener("submit",e=>{e.preventDefault();try{localStorage.setItem("birth",$("birth").value)}catch(_){};run()});
