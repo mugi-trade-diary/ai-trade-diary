@@ -181,7 +181,7 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 @media (prefers-reduced-motion:reduce){.go,.fate .orb,.fate .orb::after,.fate .spark{animation:none}}
 /* 占い結果：占いの館 */
 .oracle{--up:#46e08e;--down:#ff4d68;--doji:#e8e2f0;scroll-margin-top:72px;position:relative;overflow:hidden;border-radius:16px;padding:22px 16px 26px;gap:16px!important;color:#f6eaf3;
- background:radial-gradient(ellipse at 50% 0%,#6a1f78 0%,#2a0d36 45%,#12061a 100%);box-shadow:0 10px 40px rgba(60,0,80,.45);animation:none!important}
+ background:radial-gradient(ellipse at 50% 0%,#6a1f78 0%,#2a0d36 45%,#12061a 100%);box-shadow:0 10px 40px rgba(60,0,80,.45);}
 .oracle>*{position:relative;z-index:1}
 .or-stars{position:absolute!important;inset:0;z-index:0!important;pointer-events:none;
  background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff 50%,transparent),radial-gradient(1px 1px at 78% 12%,#ffd6ef 50%,transparent),radial-gradient(1.5px 1.5px at 40% 60%,#fff 50%,transparent),radial-gradient(1px 1px at 88% 48%,#fff 50%,transparent),radial-gradient(1.5px 1.5px at 22% 82%,#ffe9a8 50%,transparent),radial-gradient(1px 1px at 62% 90%,#fff 50%,transparent),radial-gradient(1px 1px at 52% 30%,#ffd6ef 50%,transparent);
@@ -247,6 +247,56 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 .oracle .say{background:rgba(10,0,20,.55)}
 .oracle .say p{color:#fff;font-size:.92rem}
 .or-plaque b{font-size:1.15rem;line-height:1.6}
+/* 今日の期待値 */
+.ev-num{font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;line-height:1;margin:6px 0 10px;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.6)}
+.ev-num b{font-size:clamp(3.6rem,18vw,5rem);font-variant-numeric:tabular-nums}
+.ev-num small{font-size:1.6rem;margin-left:4px}
+.ev-bar{height:18px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden;border:1px solid rgba(255,255,255,.2)}
+.ev-bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#6fb0ff,#b44dff,#ff1f8f,#ffd76a);background-size:560px 100%;box-shadow:0 0 14px rgba(255,31,143,.7)}
+.ev-rank{font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;font-size:1.6rem;margin-top:10px;color:#ffd76a;opacity:0;transform:scale(2.4)}
+.ev-rank.on{animation:slam .6s cubic-bezier(.2,1.6,.4,1) both}
+.ev.hot{border-color:#ff1f8f;box-shadow:0 0 24px rgba(255,31,143,.55),inset 0 0 30px rgba(255,31,143,.25)}
+.ev.hot .ev-rank{color:#ff4fa3;text-shadow:0 0 16px #ff1f8f}
+.ev.max{animation:hotPulse 1s ease-in-out infinite}
+.ev.max .ev-rank{background:linear-gradient(90deg,#ff5a72,#ffd76a,#46e08e,#6fb0ff,#b44dff);-webkit-background-clip:text;background-clip:text;color:transparent}
+@keyframes hotPulse{50%{box-shadow:0 0 40px rgba(255,215,106,.7),inset 0 0 40px rgba(255,31,143,.35)}}
+@media (prefers-reduced-motion:reduce){.ev.max{animation:none}.ev-rank{opacity:1;transform:none}}
+/* 戒め：最大誇張 */
+.kai{border-radius:14px;overflow:hidden;background:#1a0006;border:3px solid #ff2a4a;box-shadow:0 0 30px rgba(255,30,70,.6)}
+.oracle.play .kai{animation:rvIn .7s cubic-bezier(.2,1.3,.4,1) var(--d) both,kaiGlow 1.1s ease-in-out 5s infinite}
+@keyframes kaiGlow{50%{box-shadow:0 0 50px rgba(255,30,70,.95),inset 0 0 40px rgba(255,30,70,.35);border-color:#ffd400}}
+.tape{background:repeating-linear-gradient(-45deg,#ffd400 0 18px,#111 18px 36px);padding:6px 0;overflow:hidden;white-space:nowrap}
+.tape span{display:inline-block;background:#ffd400;color:#111;font-weight:800;font-size:.85rem;letter-spacing:.1em;padding:2px 10px;animation:tape 9s linear infinite}
+.tape.rev span{animation-direction:reverse}
+@keyframes tape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.kai-in{padding:18px 14px 20px;text-align:center;position:relative;background:radial-gradient(circle at 50% 30%,#5a0018,#1a0006 75%)}
+.kai-lbl{display:inline-block;background:#ff2a4a;color:#fff;font-weight:800;font-size:.85rem;letter-spacing:.15em;padding:4px 14px;border-radius:999px}
+.kai-rule{display:block;margin:14px 0 6px;font-family:"M PLUS Rounded 1c",sans-serif;font-weight:800;font-size:clamp(1.6rem,7.5vw,2.2rem);line-height:1.35;color:#fff;
+ text-shadow:0 0 2px #ff2a4a,0 3px 0 #a0001c,0 0 22px rgba(255,40,80,.9)}
+.oracle.play .kai-rule{animation:slam .7s cubic-bezier(.2,1.6,.4,1) 4.7s both}
+.kai-must{color:#ffd400;font-weight:800;font-size:1.05rem;letter-spacing:.08em}
+.kai-ban{display:flex;gap:12px;align-items:center;justify-content:center;margin:16px auto 6px;padding:10px 14px;border:2px dashed #ff6b81;border-radius:12px;max-width:26em;text-align:left;background:rgba(255,40,80,.12)}
+.kai-ban small{display:block;color:#ff9aaa;font-weight:800;letter-spacing:.2em;font-size:.8rem}
+.kai-ban b{color:#fff;font-size:1.1rem}
+.no{flex:none;width:44px;height:44px;border-radius:50%;border:6px solid #ff2a4a;position:relative;background:#fff}
+.no::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:6px;margin-left:-3px;background:#ff2a4a;transform:rotate(45deg)}
+.vow{--p:0;position:relative;overflow:hidden;margin-top:14px;width:100%;max-width:340px;min-height:62px;border-radius:999px;border:3px solid #ffd400;background:#2a0008;color:#fff;
+ font:inherit;font-weight:800;font-size:1.1rem;cursor:pointer;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.vow-fill{position:absolute;inset:0;width:calc(var(--p)*100%);background:linear-gradient(90deg,#ff2a4a,#ffd400)}
+.vow-t{position:relative}
+.kai.vowed .vow{border-color:#46e08e;background:#0b3b22}.kai.vowed .vow-fill{background:linear-gradient(90deg,#16955a,#46e08e)}
+.stamp{position:absolute;right:12px;top:58px;font-family:var(--display);font-size:1.8rem;color:#ff2a4a;border:4px double #ff2a4a;border-radius:10px;padding:2px 10px;transform:rotate(-14deg) scale(3);opacity:0;pointer-events:none;background:rgba(255,255,255,.9)}
+.kai.vowed .stamp{animation:stampIn .45s cubic-bezier(.2,1.6,.4,1) forwards}
+@keyframes stampIn{to{opacity:1;transform:rotate(-14deg) scale(1)}}
+.kai-foot{margin:12px 0 0;color:#ffb3c0;font-weight:700}
+.kai.vowed .kai-foot{color:#46e08e}
+#step-result.oracle{animation:none}#step-result.oracle.alarm{animation:alarm .6s ease-out}
+@keyframes alarm{0%{box-shadow:inset 0 0 0 9999px rgba(255,0,40,.45)}20%{transform:translateX(-10px)}40%{transform:translateX(10px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}100%{transform:none;box-shadow:0 10px 40px rgba(60,0,80,.45)}}
+@media (prefers-reduced-motion:reduce){.tape span,.oracle.play .kai,#step-result.oracle.alarm{animation:none}.oracle.play .kai{opacity:1}}
+.or-grid.one{grid-template-columns:1fr}
+.or-tile.act{border-color:rgba(70,224,142,.5);background:rgba(5,30,18,.6)}
+.or-tile.act .lbl{color:#46e08e}
+.or-tile.act b{font-size:1.08rem;line-height:1.6}
 </style>
 </head>
 <body>
@@ -375,24 +425,33 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
         <div class="or-tile rv" style="--d:2.5s"><span class="lbl">月</span><b id="ms-moon"></b><p id="ms-moon-text"></p></div>
       </div>
 
-      <div class="or-box rv" style="--d:2.9s">
-        <span class="lbl">地合との相性</span>
-        <div class="or-big meter" id="match"></div>
+      <div class="or-box ev rv" style="--d:2.9s">
+        <span class="lbl">今日の期待値</span>
+        <div class="ev-num"><b id="ev">0</b><small>%</small></div>
+        <div class="ev-bar"><i id="ev-bar"></i></div>
+        <div class="ev-rank" id="ev-rank"></div>
         <p id="match-text"></p>
       </div>
 
-      <div class="or-grid">
-        <div class="or-tile rv" style="--d:3.4s"><span class="lbl">前場</span><b id="am"></b></div>
-        <div class="or-tile rv" style="--d:3.55s"><span class="lbl">後場</span><b id="pm"></b></div>
+      <div class="or-grid one">
+        <div class="or-tile act rv" style="--d:3.4s"><span class="lbl">前場でやること</span><b id="am"></b></div>
+        <div class="or-tile act rv" style="--d:3.55s"><span class="lbl">後場でやること</span><b id="pm"></b></div>
       </div>
 
-      <div class="or-box rv" style="--d:3.8s">
-        <span class="lbl">やらかし度</span>
-        <div class="or-big meter risk" id="risk"></div>
-      </div>
 
-      <div class="or-plaque rv" style="--d:4.3s"><span class="lbl">今日の戒め</span><b id="rule"></b></div>
-      <div class="or-plaque warn rv" style="--d:4.6s"><span class="lbl">近づくな</span><b id="avoid"></b></div>
+      <div class="kai rv" style="--d:4.3s" id="kai">
+        <div class="tape" aria-hidden="true"><span>⚠ 警告　WARNING　⚠ 警告　WARNING　⚠ 警告　WARNING　⚠ 警告　WARNING　⚠ 警告　WARNING　</span></div>
+        <div class="kai-in">
+          <div class="kai-lbl">クウからの絶対命令</div>
+          <b class="kai-rule" id="rule"></b>
+          <div class="kai-must">これだけは、絶対に守る。</div>
+          <div class="kai-ban"><span class="no" aria-hidden="true"></span><div><small>立入禁止</small><b id="avoid"></b></div></div>
+          <button class="vow" type="button" id="vow"><span class="vow-fill"></span><span class="vow-t" id="vow-t">長押しして、クウに誓う</span></button>
+          <div class="stamp" id="stamp" aria-hidden="true">誓約済</div>
+          <p class="kai-foot" id="kai-foot">破れば、またドカンが来る。</p>
+        </div>
+        <div class="tape rev" aria-hidden="true"><span>⚠ 警告　WARNING　⚠ 警告　WARNING　⚠ 警告　WARNING　⚠ 警告　WARNING　⚠ 警告　WARNING　</span></div>
+      </div>
 
       <div class="side">
         <div class="say rv" style="--d:5s"><img class="av" src="images/icon-meru.jpg" alt=""><div><b>メル</b><small>検証担当のひとこと</small><p id="mugi"></p></div></div>
@@ -502,7 +561,15 @@ const FORTUNES=[
   {k:"大陽線",c:"up",o:20,cl:95,h:100,l:15,s:"《報告》最高にかみ合う日です。それでも、浮かれた瞬間が天井。それが記録の現実です。"}
 ];
 const MATCH_TEXT=["地合とは真逆。あなたが悪いのではなく、今日は相手が悪いだけ。見るだけの日にしましょう。","少しずれています。あなたのリズムは良いけれど、今日はそれを信じすぎないこと。","半分かみ合っています。ルールどおりにできるあなたなら、悪くない日。","よくかみ合っています。あなたの強みが出る日。だからこそ量は増やさない。","最高の相性です。ただ、こういう日ほど決めた損切りを守るのが、現実的な勝ち方。"];
-const SESSION=["集中できる時間","ふつう","休むが吉"];
+/* 前場・後場は「休む」ではなく、その日にやる具体的な行動。売買の方向やタイミングは言わない */
+const AM_ACT=[
+  ["入る前に損切り位置を声に出す。入ったら10秒以内に逆指値。","調子がいい日こそ、数量はいつもと同じ。増やさない。","1回入るごとに、ノートに理由を1行だけ書く。"],
+  ["寄ってから最初の15分は、チャートを見るだけ。指は置かない。","入る前に「これは感情？計画？」と自分に聞く。","2連敗したら、5分だけ画面から目をはなす。"],
+  ["数量はいつもの半分。逆指値を先に入れてから入る。","最初の15分は見るだけ。メモ帳に気づいたことを書く。","1回負けたら、立ち上がって水を1杯飲んでから座る。"]];
+const PM_ACT=[
+  ["昼休みに前場の記録を見返してから始める。","前場で勝っていても、後場は数量を増やさない。","引け前30分は新しい注文を出さない。持っている分の管理だけ。"],
+  ["前場の損益を確認。−3万円に近ければ、その時点で閉じる。","後場最初の1回は、前場で一番うまくいった形だけを狙う。","引け前30分は新しい注文を出さない。"],
+  ["前場で負けていたら、取り返そうとしない。後場は記録をつける時間にする。","後場は1回だけと決める。2回目はなし。","逆指値が入っているかを、14時に一度だけ全部確認する。"]];
 const RULES=["入ったら、すぐ逆指値。","1回の損は1万円まで。","今日の負けが3万円に届いたら、閉じる。","取り返そうとした瞬間が一番危ない。","入る前に、損切り位置を声に出す。","3連敗したら、30分散歩。"];
 const AVOID=["寄り付き直後の飛びつき","SNSで話題の急騰","「今日中に取り返す」という考え","引け間際の勢い任せ","負けた直後の倍張り","深夜の反省会"];
 const MERU=["占いの的中率は検証していません。でも戒めのほうは、ムギの記録どおりです。","占いに根拠はありません。負けを3万で止めるルールには根拠があります。","勝ち数と利益は別の欄です。今日も忘れずに。","《記録》「今日は勝てる日」は感想です。記録ではありません。","感情で入った取引は、だいたい負けています。記録がそう言っています。","足の形より、損切りを置いたかどうかを見てください。"];
@@ -566,8 +633,9 @@ function run(){
   const f=FORTUNES[Math.max(0,Math.min(6,score+Math.floor(r()*3)))];
   const risk=Math.max(1,Math.min(5,5-score+Math.floor(r()*2)));
   const rule=r()<.5?TYPE_RULE[dt]:pick(r,RULES), avoid=pick(r,AVOID);
-  const am=pick(r,SESSION), pm=am==="休むが吉"?pick(r,SESSION.slice(0,2)):pick(r,SESSION);
-  const meter="●".repeat(risk)+"○".repeat(5-risk), stars="★".repeat(score+1)+"☆".repeat(4-score);
+  const lv=score>=3?0:score>=2?1:2, am=pick(r,AM_ACT[lv]), pm=pick(r,PM_ACT[lv]);
+  const ev=Math.max(3,Math.min(98,8+score*20+Math.floor(r()*12)-(risk-1)*3));
+  const evRank=ev>=80?"激アツ":ev>=60?"アツい":ev>=40?"チャンスあり":ev>=20?"ひかえめ":"おやすみの日";
   $("my-type").textContent=my+"型"; $("my-type-text").textContent=MY_TEXT[my];
   $("ms-star").textContent=STARS[star]; $("ms-star-text").textContent=STAR_TEXT[star];
   $("ms-birth").textContent=`${bk.stem}${bk.branch}の日（${bk.stem}＝${bk.elem}の気）`; $("ms-birth-text").textContent=STEM_TEXT[bk.stem];
@@ -576,12 +644,12 @@ function run(){
   $("date").textContent=d.replaceAll("-","/")+" のあなたの足";
   $("verdict").textContent=f.k; $("verdict").className="verdict "+f.c;
   $("sub").textContent=f.s;
-  $("match").textContent=stars; $("match-text").textContent=`前の日は「${dt}」。あなたは「${my}型」。${MATCH_TEXT[score]}`;
+  $("ev").textContent="0"; $("ev").dataset.v=ev; $("ev-rank").textContent=evRank; $("ev-bar").style.width="0"; $("match-text").textContent=`前の日は「${dt}」。あなたは「${my}型」。${MATCH_TEXT[score]}`;
   $("am").textContent=am; $("pm").textContent=pm;
-  $("risk").textContent=meter; $("rule").textContent=rule; $("avoid").textContent=avoid;
+  $("rule").textContent=rule; $("avoid").textContent=avoid;
   $("mugi").textContent=pick(r,MERU); $("hamu").textContent=pick(r,HAMU);
   drawCandle(f);
-  shareText=`クウの足占い、今日の私は「${f.k}」\n${my}型 × 地合「${dt}」 相性${stars}\n${bk.stem}の人×${tk.stem}${tk.branch}の日＝${rel}・${moon[1]}\nやらかし度 ${meter}\n戒め：${rule}\n\n#クウの足占い\n売買の勧めではありません。記録です。`;
+  shareText=`クウの足占い、今日の私は「${f.k}」\n${my}型 × 地合「${dt}」 期待値${ev}%（${evRank}）\n${bk.stem}の人×${tk.stem}${tk.branch}の日＝${rel}・${moon[1]}\n戒め：${rule}\n\n#クウの足占い\n売買の勧めではありません。記録です。`;
   $("share").href="https://twitter.com/intent/tweet?text="+encodeURIComponent(shareText);
 }
 /* 生年月日カレンダー */
@@ -632,12 +700,30 @@ $("f").addEventListener("submit",async e=>{
   run(); await fate();
   $("step-input").hidden=true; const res=$("step-result"); res.hidden=false;
   const dress=(id,t0)=>{const el=$(id);el.innerHTML=[...el.textContent].map((c,i)=>`<span class="${"★●".includes(c)?"on":"off"}" style="--d:${(t0+i*.18).toFixed(2)}s">${"★●".includes(c)?c:(c==="☆"?"★":"●")}</span>`).join("")};
-  dress("match",3.2); dress("risk",4.1);
+  const evEl=$("ev"), evV=+evEl.dataset.v, bar=$("ev-bar"), box=evEl.closest(".ev");
+  box.classList.remove("hot","max"); $("ev-rank").classList.remove("on");
+  setTimeout(()=>{const t0=performance.now(),D=1800;
+    const tick=now=>{const k=Math.min(1,(now-t0)/D),e=1-Math.pow(1-k,3),v=Math.round(evV*e);
+      evEl.textContent=v; bar.style.width=v+"%";
+      if(k<1)requestAnimationFrame(tick);
+      else{$("ev-rank").classList.add("on");if(evV>=60)box.classList.add("hot");if(evV>=80)box.classList.add("max");if(navigator.vibrate)navigator.vibrate(evV>=60?[40,30,40,30,120]:60)}};
+    requestAnimationFrame(tick)},3300);
   res.classList.remove("play");void res.offsetWidth;res.classList.add("play");
   if(navigator.vibrate)setTimeout(()=>navigator.vibrate([30,40,80]),1000);
+  vowReset(); res.classList.remove("alarm");
+  setTimeout(()=>{res.classList.remove("alarm");void res.offsetWidth;res.classList.add("alarm");if(navigator.vibrate)navigator.vibrate([200,80,200,80,400])},4700);
   $("uranai").scrollIntoView({behavior:"smooth",block:"start"}); setTimeout(()=>res.scrollIntoView({behavior:"smooth",block:"start"}),50);
   fating=false;
 });
+/* 戒めに誓う：長押しで誓約 */
+let vowTimer=null, vowStart=0;
+function vowReset(){$("kai").classList.remove("vowed");$("vow").style.setProperty("--p",0);$("vow-t").textContent="長押しして、クウに誓う";$("kai-foot").textContent="破れば、またドカンが来る。"}
+function vowDone(){cancelAnimationFrame(vowTimer);vowTimer=null;$("vow").style.setProperty("--p",1);$("kai").classList.add("vowed");$("vow-t").textContent="誓いました";$("kai-foot").textContent="クウが見ています。今日はこの約束だけ守れば勝ちです。";if(navigator.vibrate)navigator.vibrate([80,40,300])}
+function vowTick(now){const k=Math.min(1,(now-vowStart)/1500);$("vow").style.setProperty("--p",k);if(navigator.vibrate&&Math.random()<.15)navigator.vibrate(10);if(k>=1)vowDone();else vowTimer=requestAnimationFrame(vowTick)}
+$("vow").addEventListener("pointerdown",e=>{if($("kai").classList.contains("vowed"))return;e.preventDefault();vowStart=performance.now();vowTimer=requestAnimationFrame(vowTick)});
+["pointerup","pointerleave","pointercancel"].forEach(ev=>$("vow").addEventListener(ev,()=>{if(vowTimer&&!$("kai").classList.contains("vowed")){cancelAnimationFrame(vowTimer);vowTimer=null;$("vow").style.setProperty("--p",0)}}));
+$("vow").addEventListener("click",e=>{if(e.detail===0&&!$("kai").classList.contains("vowed"))vowDone()});
+$("vow").addEventListener("contextmenu",e=>e.preventDefault());
 $("again").addEventListener("click",()=>{$("step-result").hidden=true;$("step-input").hidden=false;$("step-input").scrollIntoView({behavior:"smooth",block:"center"})});
 $("copy").addEventListener("click",()=>{
   const ok=()=>$("toast").textContent="コピーしました。", ng=()=>$("toast").textContent="コピーできませんでした。手で選択してください。";
