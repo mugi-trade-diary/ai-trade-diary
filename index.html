@@ -539,13 +539,17 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
     }else video.pause();
   }
   const sound=document.getElementById("hero-sound");
+  function setMuted(m){
+    video.muted=m;
+    sound.setAttribute("aria-pressed",String(!m));
+    document.getElementById("hero-sound-symbol").textContent=m?"♪":"🔇";
+    document.getElementById("hero-sound-label").textContent=m?"音を出す":"音を消す";
+    sound.setAttribute("aria-label",m?"音を出す":"音を消す");
+  }
+  window.heroMute=()=>setMuted(true);
   sound.addEventListener("click",()=>{
-    video.muted=!video.muted;
-    sound.setAttribute("aria-pressed",String(!video.muted));
-    document.getElementById("hero-sound-symbol").textContent=video.muted?"♪":"🔇";
-    document.getElementById("hero-sound-label").textContent=video.muted?"音を出す":"音を消す";
-    sound.setAttribute("aria-label",video.muted?"音を出す":"音を消す");
-    if(!video.muted&&video.paused){wantsPlayback=true;syncPlayback()}
+    setMuted(!video.muted);
+    if(!video.muted){if(window.kuuStop)window.kuuStop();if(video.paused){wantsPlayback=true;syncPlayback()}}
   });
   toggle.addEventListener("click",()=>{
     wantsPlayback=video.paused;
@@ -743,11 +747,14 @@ function pickRender(){
 /* 運命の瞬間 */
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 let fating=false;
-/* クウの曲：占うボタンを押したときだけ鳴らす。3・2・1のあとに盛り上がるよう頭を切ってある */
+/* クウの曲 */
 const kuuBgm=new Audio("audio/kuu-fortune.mp3"); kuuBgm.preload="none"; kuuBgm.volume=.8;
 let kuuOn=true; try{kuuOn=localStorage.getItem("kuuSound")!=="off"}catch(_){}
 function kuuBtn(){const b=$("kuu-sound");b.hidden=false;b.textContent=kuuOn?"🔇 曲を止める":"♪ クウの曲を流す";b.setAttribute("aria-pressed",String(kuuOn))}
-function kuuPlay(){if(!kuuOn)return;const hv=$("hero-promo");if(hv&&!hv.muted)hv.pause();kuuBgm.currentTime=0;const p=kuuBgm.play();if(p&&p.catch)p.catch(()=>{})}
+/* 「クウの足占い」を押した瞬間に、動画の曲からクウの曲へ切りかえる。占うボタンでは3・2・1の前の位置（28.5秒）へ飛ぶ */
+function kuuPlay(at){if(!kuuOn)return;if(window.heroMute)window.heroMute();kuuBgm.currentTime=at;const p=kuuBgm.play();if(p&&p.catch)p.catch(()=>{});kuuBtn()}
+window.kuuStop=()=>{kuuBgm.pause();$("kuu-sound").hidden=true};
+document.querySelectorAll('a[href="#uranai"]').forEach(a=>a.addEventListener("click",()=>kuuPlay(0)));
 document.addEventListener("click",e=>{if(!e.target.closest||!e.target.closest("#kuu-sound"))return;
   kuuOn=!kuuOn;try{localStorage.setItem("kuuSound",kuuOn?"on":"off")}catch(_){}
   if(kuuOn){const p=kuuBgm.play();if(p&&p.catch)p.catch(()=>{})}else kuuBgm.pause();kuuBtn()});
@@ -773,7 +780,7 @@ async function fate(){
 $("f").addEventListener("submit",async e=>{
   e.preventDefault(); if(fating)return; fating=true;
   try{localStorage.setItem("birth",$("birth").value)}catch(_){}
-  run(); kuuPlay(); kuuBtn(); await fate();
+  run(); kuuPlay(28.5); kuuBtn(); await fate();
   $("step-input").hidden=true; const res=$("step-result"); res.hidden=false;
   const dress=(id,t0)=>{const el=$(id);el.innerHTML=[...el.textContent].map((c,i)=>`<span class="${"★●".includes(c)?"on":"off"}" style="--d:${(t0+i*.18).toFixed(2)}s">${"★●".includes(c)?c:(c==="☆"?"★":"●")}</span>`).join("")};
   const evEl=$("ev"), evV=+evEl.dataset.v, bar=$("ev-bar"), box=evEl.closest(".ev");
@@ -800,7 +807,7 @@ $("vow").addEventListener("pointerdown",e=>{if($("kai").classList.contains("vowe
 ["pointerup","pointerleave","pointercancel"].forEach(ev=>$("vow").addEventListener(ev,()=>{if(vowTimer&&!$("kai").classList.contains("vowed")){cancelAnimationFrame(vowTimer);vowTimer=null;$("vow").style.setProperty("--p",0)}}));
 $("vow").addEventListener("click",e=>{if(e.detail===0&&!$("kai").classList.contains("vowed"))vowDone()});
 $("vow").addEventListener("contextmenu",e=>e.preventDefault());
-$("again").addEventListener("click",()=>{kuuBgm.pause();$("kuu-sound").hidden=true;$("step-result").hidden=true;$("step-input").hidden=false;$("step-input").scrollIntoView({behavior:"smooth",block:"center"})});
+$("again").addEventListener("click",()=>{$("step-result").hidden=true;$("step-input").hidden=false;$("step-input").scrollIntoView({behavior:"smooth",block:"center"})});
 $("copy").addEventListener("click",()=>{
   const ok=()=>$("toast").textContent="コピーしました。", ng=()=>$("toast").textContent="コピーできませんでした。手で選択してください。";
   try{navigator.clipboard.writeText(shareText).then(ok,ng)}catch(_){ng()}
