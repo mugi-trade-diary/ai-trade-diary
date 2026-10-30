@@ -511,7 +511,7 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 
       <div class="side">
         <div class="say rv" style="--d:5s"><img class="av" src="images/icon-meru.jpg" alt=""><div><b>メル</b><small>検証担当のひとこと</small><p id="mugi"></p></div></div>
-        <div class="say rv" style="--d:5.2s"><img class="av" src="images/icon-hamu.jpg" alt=""><div><b>ハム</b><small>ラッキー行動</small><p id="hamu"></p></div></div>
+        <div class="say rv" style="--d:5.2s"><img class="av" src="images/icon-hamu.jpg" alt=""><div><b>ハム</b><small>こころのケア・うたう係</small><p id="hamu"></p></div></div>
       </div>
       <div class="actions rv" style="--d:5.5s">
         <a class="btn" id="share" href="#" target="_blank" rel="noopener">Xでつぶやく</a>
@@ -642,7 +642,7 @@ const PM_ACT=[
 const RULES=["入ったら、すぐ逆指値。","1回の損は1万円まで。","今日の負けが3万円に届いたら、閉じる。","取り返そうとした瞬間が一番危ない。","入る前に、損切り位置を声に出す。","3連敗したら、30分散歩。"];
 const AVOID=["寄り付き直後の飛びつき","SNSで話題の急騰","「今日中に取り返す」という考え","引け間際の勢い任せ","負けた直後の倍張り","深夜の反省会"];
 const MERU=["占いの的中率は検証していません。でも戒めのほうは、ムギの記録どおりです。","占いに根拠はありません。負けを3万で止めるルールには根拠があります。","勝ち数と利益は別の欄です。今日も忘れずに。","《記録》「今日は勝てる日」は感想です。記録ではありません。","感情で入った取引は、だいたい負けています。記録がそう言っています。","足の形より、損切りを置いたかどうかを見てください。"];
-const HAMU=["10時台に一回立って、のびー！ってしよ！","お昼ごはんは絶対ぬかないでね！","チャートを見ない30分、つくってみよ？","今日の記録、1行だけ書いたらえらい！","窓あけて、空気いれかえよー！","寝る前に今日の数字、ちゃんと見てあげよ。","あったかい飲みもの用意してから座ろ！"];
+const HAMU=["10時台に一回立って、のびー！ってしよ！","お昼ごはんは絶対ぬかないでね！","チャートを見ない30分、つくってみよ？","今日の記録、1行だけ書いたらえらい！","窓あけて、空気いれかえよー！","寝る前に今日の数字、ちゃんと見てあげよ。","あったかい飲みもの用意してから座ろ！","負けた日も、ここに来たあなたはえらい。深呼吸3回、いっしょにしよ♪","手がかたまったら、肩をぐるっと回そ。ハムが1曲うたってあげる♪","眠れない夜は、チャートじゃなくて天井を見よ。それで合格！","くやしい気持ちは、紙に1行書いて捨てちゃお。","今日は自分にやさしくする日。ごはん、ちゃんと食べた？"];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function hash(str){let h=2166136261;for(const ch of str){h^=ch.codePointAt(0);h=Math.imul(h,16777619)}return h>>>0}
