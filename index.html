@@ -164,6 +164,8 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 @keyframes goPulse{0%,100%{box-shadow:0 8px 24px rgba(255,31,143,.45),0 0 0 0 rgba(255,31,143,.5)}50%{box-shadow:0 8px 24px rgba(255,31,143,.45),0 0 0 16px rgba(255,31,143,0)}}
 #step-input{display:flex;flex-direction:column;align-items:center;gap:16px}
 #step-result[hidden],#step-input[hidden],.fate[hidden]{display:none}
+.kuu-sound{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:120;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-size:.85rem;font-weight:700;color:#fff;background:rgba(40,12,52,.88);box-shadow:0 0 0 2px #ffd76a inset,0 4px 14px rgba(0,0,0,.35);cursor:pointer}
+.kuu-sound[hidden]{display:none}
 #step-result{display:flex;flex-direction:column;gap:14px;animation:resIn .6s ease-out}
 @keyframes resIn{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:none}}
 #step-result .reading>*{animation:rowIn .5s ease-out both}
@@ -346,6 +348,9 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
     <div class="hero-toolbar" id="hero-toolbar" hidden>
       <button class="hero-control" id="hero-toggle" type="button" aria-controls="hero-promo" aria-label="紹介動画を再生">
         <span class="hero-symbol" id="hero-toggle-symbol" aria-hidden="true">▶</span><span class="hero-control-label" id="hero-toggle-label">再生</span>
+      </button>
+      <button class="hero-control" id="hero-sound" type="button" aria-controls="hero-promo" aria-pressed="false" aria-label="音を出す">
+        <span class="hero-symbol" id="hero-sound-symbol" aria-hidden="true">♪</span><span class="hero-control-label" id="hero-sound-label">音を出す</span>
       </button>
       <button class="hero-control" id="hero-fullscreen" type="button" aria-controls="hero-promo" aria-label="紹介動画を全画面で見る" hidden>
         <span class="hero-symbol" aria-hidden="true">⛶</span><span class="hero-control-label">全画面</span>
@@ -533,6 +538,15 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
       if(play&&typeof play.catch==="function")play.catch(()=>{showState()});
     }else video.pause();
   }
+  const sound=document.getElementById("hero-sound");
+  sound.addEventListener("click",()=>{
+    video.muted=!video.muted;
+    sound.setAttribute("aria-pressed",String(!video.muted));
+    document.getElementById("hero-sound-symbol").textContent=video.muted?"♪":"🔇";
+    document.getElementById("hero-sound-label").textContent=video.muted?"音を出す":"音を消す";
+    sound.setAttribute("aria-label",video.muted?"音を出す":"音を消す");
+    if(!video.muted&&video.paused){wantsPlayback=true;syncPlayback()}
+  });
   toggle.addEventListener("click",()=>{
     wantsPlayback=video.paused;
     status.textContent="";
@@ -729,6 +743,15 @@ function pickRender(){
 /* 運命の瞬間 */
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
 let fating=false;
+/* クウの曲：占うボタンを押したときだけ鳴らす。3・2・1のあとに盛り上がるよう頭を切ってある */
+const kuuBgm=new Audio("audio/kuu-fortune.mp3"); kuuBgm.preload="none"; kuuBgm.volume=.8;
+let kuuOn=true; try{kuuOn=localStorage.getItem("kuuSound")!=="off"}catch(_){}
+function kuuBtn(){const b=$("kuu-sound");b.hidden=false;b.textContent=kuuOn?"🔇 曲を止める":"♪ クウの曲を流す";b.setAttribute("aria-pressed",String(kuuOn))}
+function kuuPlay(){if(!kuuOn)return;const hv=$("hero-promo");if(hv&&!hv.muted)hv.pause();kuuBgm.currentTime=0;const p=kuuBgm.play();if(p&&p.catch)p.catch(()=>{})}
+document.addEventListener("click",e=>{if(!e.target.closest||!e.target.closest("#kuu-sound"))return;
+  kuuOn=!kuuOn;try{localStorage.setItem("kuuSound",kuuOn?"on":"off")}catch(_){}
+  if(kuuOn){const p=kuuBgm.play();if(p&&p.catch)p.catch(()=>{})}else kuuBgm.pause();kuuBtn()});
+kuuBgm.addEventListener("ended",()=>{$("kuu-sound").hidden=true});
 async function fate(){
   const fx=$("fate"), msg=$("fate-msg"), cnt=$("fate-count"), fl=$("fate-flash");
   const quick=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -750,7 +773,7 @@ async function fate(){
 $("f").addEventListener("submit",async e=>{
   e.preventDefault(); if(fating)return; fating=true;
   try{localStorage.setItem("birth",$("birth").value)}catch(_){}
-  run(); await fate();
+  run(); kuuPlay(); kuuBtn(); await fate();
   $("step-input").hidden=true; const res=$("step-result"); res.hidden=false;
   const dress=(id,t0)=>{const el=$(id);el.innerHTML=[...el.textContent].map((c,i)=>`<span class="${"★●".includes(c)?"on":"off"}" style="--d:${(t0+i*.18).toFixed(2)}s">${"★●".includes(c)?c:(c==="☆"?"★":"●")}</span>`).join("")};
   const evEl=$("ev"), evV=+evEl.dataset.v, bar=$("ev-bar"), box=evEl.closest(".ev");
@@ -777,7 +800,7 @@ $("vow").addEventListener("pointerdown",e=>{if($("kai").classList.contains("vowe
 ["pointerup","pointerleave","pointercancel"].forEach(ev=>$("vow").addEventListener(ev,()=>{if(vowTimer&&!$("kai").classList.contains("vowed")){cancelAnimationFrame(vowTimer);vowTimer=null;$("vow").style.setProperty("--p",0)}}));
 $("vow").addEventListener("click",e=>{if(e.detail===0&&!$("kai").classList.contains("vowed"))vowDone()});
 $("vow").addEventListener("contextmenu",e=>e.preventDefault());
-$("again").addEventListener("click",()=>{$("step-result").hidden=true;$("step-input").hidden=false;$("step-input").scrollIntoView({behavior:"smooth",block:"center"})});
+$("again").addEventListener("click",()=>{kuuBgm.pause();$("kuu-sound").hidden=true;$("step-result").hidden=true;$("step-input").hidden=false;$("step-input").scrollIntoView({behavior:"smooth",block:"center"})});
 $("copy").addEventListener("click",()=>{
   const ok=()=>$("toast").textContent="コピーしました。", ng=()=>$("toast").textContent="コピーできませんでした。手で選択してください。";
   try{navigator.clipboard.writeText(shareText).then(ok,ng)}catch(_){ng()}
@@ -788,6 +811,7 @@ renderReport(); run();
 fetch("data/today.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject()).then(j=>{DATA=j;renderReport();run()}).catch(()=>{});
 </script>
 
+<button class="kuu-sound" id="kuu-sound" type="button" hidden aria-pressed="true">🔇 曲を止める</button>
 <div class="fate" id="fate" hidden aria-live="assertive"><div class="orb"></div><div class="msg" id="fate-msg"></div><div class="count" id="fate-count"></div><div class="flash" id="fate-flash"></div></div>
 </body>
 </html>
