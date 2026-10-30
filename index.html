@@ -146,7 +146,7 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 .meishiki{border-top:0;padding-top:0}
 .meishiki b{font-weight:700}
 /* 生年月日カレンダーと、占う瞬間の演出 */
-.pick{background:var(--white);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;width:100%;max-width:420px}
+.pick{background:var(--white);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px;width:100%;box-sizing:border-box}
 .pick-h{font-weight:700;color:var(--ink)}
 .pick-show{font-size:1.5rem;font-weight:800;color:var(--pink);text-align:center;letter-spacing:.04em}
 .pick-row{display:flex;gap:8px;align-items:center}
@@ -158,12 +158,13 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 .cal button{font:inherit;font-size:1rem;min-height:44px;border:0;border-radius:10px;background:#fff6fa;color:var(--ink);cursor:pointer}
 .cal button:hover{background:var(--pink-soft)}
 .cal button[aria-pressed="true"]{background:var(--pink);color:var(--white);font-weight:800;transform:scale(1.08);box-shadow:0 4px 12px rgba(255,31,143,.4)}
-.go{width:100%;max-width:420px;min-height:76px;font:inherit;font-size:1.35rem;font-weight:800;letter-spacing:.06em;color:var(--white);border:0;border-radius:999px;cursor:pointer;
+.go{width:100%;box-sizing:border-box;min-height:76px;font:inherit;font-size:1.35rem;font-weight:800;letter-spacing:.06em;color:var(--white);border:0;border-radius:999px;cursor:pointer;
  background:linear-gradient(135deg,#ff1f8f,#b44dff);box-shadow:0 8px 24px rgba(255,31,143,.45);animation:goPulse 1.6s ease-in-out infinite;touch-action:manipulation}
 .go:active{transform:scale(.94)}
 .go small{display:block;font-size:.75rem;font-weight:500;opacity:.9;letter-spacing:0}
 @keyframes goPulse{0%,100%{box-shadow:0 8px 24px rgba(255,31,143,.45),0 0 0 0 rgba(255,31,143,.5)}50%{box-shadow:0 8px 24px rgba(255,31,143,.45),0 0 0 16px rgba(255,31,143,0)}}
-#step-input{display:flex;flex-direction:column;align-items:center;gap:16px}
+#f{display:block}
+#step-input{display:flex;flex-direction:column;align-items:stretch;gap:16px;width:100%}
 #step-result[hidden],#step-input[hidden],.fate[hidden]{display:none}
 .kuu-sound{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:120;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-size:.85rem;font-weight:700;color:#fff;background:rgba(40,12,52,.88);box-shadow:0 0 0 2px #ffd76a inset,0 4px 14px rgba(0,0,0,.35);cursor:pointer}
 .kuu-sound[hidden]{display:none}
