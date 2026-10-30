@@ -1,0 +1,20 @@
+{
+  "period": "2026-11",
+  "evidence_type": "unknown",
+  "reconciled": false,
+  "payment_evidence": "",
+  "expense_evidence": "",
+  "tax_evidence": "",
+  "gross_sales_jpy": null,
+  "refunds_jpy": null,
+  "chargebacks_jpy": null,
+  "fees_jpy": null,
+  "production_jpy": null,
+  "advertising_jpy": null,
+  "hosting_jpy": null,
+  "other_costs_jpy": null,
+  "taxes_jpy": null,
+  "labor_minutes": null,
+  "labor_rate_jpy_hour": null,
+  "counts": {"views": null, "profile_visits": null, "landing_sessions": null, "downloads": null, "paid_orders": null}
+}
