@@ -327,6 +327,15 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 .fate.ev-low{background:radial-gradient(circle at 50% 45%,#1d2f6e 0%,#140b26 60%,#04040b 100%)}
 .fate.ev-low .orb{box-shadow:0 0 50px 12px rgba(90,150,255,.7),0 0 120px 40px rgba(60,40,180,.45)}
 .fate.ev-low .msg{color:#a9c8ff}
+.cockpit{background:var(--black);color:var(--white);padding-block:48px;scroll-margin-top:80px}
+.ck-in{max-width:1100px;margin:0 auto}
+.ck-kicker{display:block;color:var(--pink);font-size:.7rem;font-weight:700;letter-spacing:.2em}
+.cockpit h2{text-align:left;margin:6px 0 20px;font-family:var(--logo);font-weight:700;letter-spacing:.02em;font-size:clamp(1.15rem,2.4vw,1.6rem);line-height:1.5}
+.ck-shot{margin:0 0 20px}
+.ck-shot img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid #2a2a30;box-shadow:0 12px 40px rgba(255,31,143,.18)}
+.ck-shot figcaption{margin-top:8px;color:#9a939a;font-size:.75rem}
+.ck-text p{margin:0 0 .9em;color:#ddd6db;font-size:.92rem;line-height:1.9}
+@media (min-width:900px){.ck-in{display:grid;grid-template-columns:1.4fr 1fr;gap:0 32px;align-items:start}.ck-kicker,.cockpit h2{grid-column:1/3}.ck-shot{margin:0}}
 </style>
 </head>
 <body>
@@ -338,7 +347,7 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 
 <header><div class="hd gut">
   <a class="logo" href="#top">MugiのAIトレード日記</a>
-  <nav><a href="#items">商品</a><a href="#uranai">クウの足占い</a><a href="#items">note</a></nav>
+  <nav><a href="#items">商品</a><a href="#cockpit">AIコクピット</a><a href="#uranai">クウの足占い</a><a href="#items">note</a></nav>
 </div></header>
 
 <section class="hero" id="top" aria-labelledby="hero-title">
@@ -375,6 +384,23 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 </section>
 
 <div class="notice gut"><b>お知らせ</b>ここに出てくる金額はすべて本人の実際の記録から計算しています。分からない数字は「未確認」と書きます。3,099万円は、国内株（楽天証券の実現損益の画面、2022〜2026年10月）とFX（楽天FX・LION FXの取引履歴CSV）の損失の合計です。投資信託・米国株・暗号資産の分は入れていません。占いは娯楽です。</div>
+
+<section class="cockpit gut" id="cockpit" aria-labelledby="cockpit-title">
+  <div class="ck-in">
+    <span class="ck-kicker">AI COCKPIT</span>
+    <h2 id="cockpit-title">AIとシステムを開発して、相場に挑む。</h2>
+    <figure class="ck-shot">
+      <img src="images/cockpit-screen.jpg" width="1600" height="1000" loading="lazy" alt="自作の相場の見張り画面のイメージ。指数の上げ下げ、注目銘柄の1分足とVWAP、AIアナリストの相場の向き、仮想売買の成績が並んでいる">
+      <figcaption>画面はイメージです（数字・銘柄はダミー）。売買の勧めではありません。</figcaption>
+    </figure>
+    <div class="ck-text">
+      <p>3,099万円を溶かして分かったのは、自分の目と勘だけでは相場に勝てないということでした。</p>
+      <p>だから今は、AIと一緒に「AIコクピット」という自分用の相場の見張り台を作っています。板と歩み値を2秒ごとに記録して、地合いの強さを測り、AIアナリストたちが毎朝「相場の向き」を出します。</p>
+      <p>そこから出るサインは、まず仮想の売買で記録するだけ。20日・30回の成績がたまって、勝てると分かるまでは本番には使いません。</p>
+      <p>固まる、止まる、作り直す。その毎日も、この日記に書いていきます。</p>
+    </div>
+  </div>
+</section>
 
 <section id="items" class="gut">
   <h2>シリーズ</h2>
