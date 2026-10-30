@@ -62,13 +62,14 @@ nav a:hover{color:var(--pink)}
   .hero-caption p{max-width:36em;font-size:.8rem}
   .hero-links{margin-top:16px}
   .hero-link{padding:10px 17px;font-size:.78rem}
-  .hero-toolbar{right:12px;bottom:12px;gap:6px}
-  .hero-control{padding:8px 12px;font-size:.7rem}
+  /* スマホでは動画の上に重ねず、動画のすぐ下に並べる（字幕が隠れないように） */
+  .hero-media{aspect-ratio:auto;max-height:none;overflow:visible}
+  .hero-video{height:auto;aspect-ratio:16/9}
+  .hero-toolbar{position:static;justify-content:flex-end;gap:6px;padding:8px 12px 0}
+  .hero-control{min-height:36px;padding:6px 12px;font-size:.7rem}
 }
 @media (max-width:420px){
-  .hero-toolbar{bottom:8px;right:8px}
-  .hero-control{min-height:44px;min-width:44px;padding:8px 10px}
-  .hero-control .hero-control-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .hero-control{min-height:40px;padding:6px 10px}
 }
 .notice{max-width:1100px;margin:0 auto;color:var(--pink);font-size:.76rem;line-height:1.6;padding-block:14px 0}
 .notice b{display:block}
