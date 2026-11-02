@@ -166,8 +166,23 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 #f{display:block}
 #step-input{display:flex;flex-direction:column;align-items:stretch;gap:16px;width:100%}
 #step-result[hidden],#step-input[hidden],.fate[hidden]{display:none}
-.kuu-sound{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:120;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-size:.85rem;font-weight:700;color:#fff;background:rgba(40,12,52,.88);box-shadow:0 0 0 2px #ffd76a inset,0 4px 14px rgba(0,0,0,.35);cursor:pointer}
+.kuu-sound{position:fixed;right:104px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:120;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-size:.85rem;font-weight:700;color:#fff;background:rgba(40,12,52,.88);box-shadow:0 0 0 2px #ffd76a inset,0 4px 14px rgba(0,0,0,.35);cursor:pointer}
 .kuu-sound[hidden]{display:none}
+/* 音楽プレーヤー（右下の回るレコード） */
+.disc{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:110;width:78px;height:78px}
+.disc[hidden]{display:none}
+.disc-rec{width:78px;height:78px;border-radius:50%;border:0;padding:0;cursor:pointer;background:radial-gradient(circle,#111 0 30%,#2a2a2e 31% 33%,#111 34% 46%,#2a2a2e 47% 49%,#111 50% 100%);box-shadow:0 0 0 3px var(--pink),0 6px 18px rgba(0,0,0,.4);display:grid;place-items:center}
+.disc-rec img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid #fff}
+.disc.on .disc-rec{animation:disc-spin 6s linear infinite}
+@keyframes disc-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.disc.on .disc-rec{animation:none}}
+.disc-btn{position:absolute;width:30px;height:30px;border-radius:50%;border:0;display:grid;place-items:center;cursor:pointer;font:700 .8rem/1 var(--body);color:#fff;background:rgba(11,11,13,.82);box-shadow:0 2px 6px rgba(0,0,0,.35)}
+.disc-play{left:-12px;top:-8px}
+.disc-close{right:-8px;top:-12px}
+.disc-btn:hover,.disc-rec:hover{filter:brightness(1.15)}
+.disc-btn:focus-visible,.disc-rec:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.disc-name{position:absolute;right:86px;bottom:22px;white-space:nowrap;font-size:.74rem;font-weight:700;color:#fff;background:rgba(11,11,13,.82);border-radius:999px;padding:4px 10px;pointer-events:none;opacity:0;transition:opacity .3s}
+.disc.show .disc-name{opacity:1}
 #step-result{display:flex;flex-direction:column;gap:14px;animation:resIn .6s ease-out}
 @keyframes resIn{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:none}}
 #step-result .reading>*{animation:rowIn .5s ease-out both}
@@ -565,7 +580,7 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
   window.heroMute=()=>setMuted(true);
   sound.addEventListener("click",()=>{
     setMuted(!video.muted);
-    if(!video.muted){if(window.kuuStop)window.kuuStop();if(video.paused){wantsPlayback=true;syncPlayback()}}
+    if(!video.muted){if(window.kuuStop)window.kuuStop();if(window.discStop)window.discStop();if(video.paused){wantsPlayback=true;syncPlayback()}}
   });
   toggle.addEventListener("click",()=>{
     wantsPlayback=video.paused;
@@ -768,7 +783,7 @@ const kuuBgm=new Audio("audio/kuu-fortune.mp3"); kuuBgm.preload="none"; kuuBgm.v
 let kuuOn=true; try{kuuOn=localStorage.getItem("kuuSound")!=="off"}catch(_){}
 function kuuBtn(){const b=$("kuu-sound");b.hidden=false;b.textContent=kuuOn?"🔇 曲を止める":"♪ クウの曲を流す";b.setAttribute("aria-pressed",String(kuuOn))}
 /* 「クウの足占い」を押した瞬間に、動画の曲からクウの曲へ切りかえる。占うボタンでは3・2・1の前の位置（28.5秒）へ飛ぶ */
-function kuuPlay(at){if(!kuuOn)return;if(window.heroMute)window.heroMute();kuuBgm.currentTime=at;const p=kuuBgm.play();if(p&&p.catch)p.catch(()=>{});kuuBtn()}
+function kuuPlay(at){if(!kuuOn)return;if(window.heroMute)window.heroMute();if(window.discStop)window.discStop();kuuBgm.currentTime=at;const p=kuuBgm.play();if(p&&p.catch)p.catch(()=>{});kuuBtn()}
 window.kuuStop=()=>{kuuBgm.pause();$("kuu-sound").hidden=true};
 document.querySelectorAll('a[href="#uranai"]').forEach(a=>a.addEventListener("click",()=>kuuPlay(0)));
 document.addEventListener("click",e=>{if(!e.target.closest||!e.target.closest("#kuu-sound"))return;
@@ -836,5 +851,31 @@ fetch("data/today.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject
 
 <button class="kuu-sound" id="kuu-sound" type="button" hidden aria-pressed="true">🔇 曲を止める</button>
 <div class="fate" id="fate" hidden aria-live="assertive"><div class="orb"></div><div class="msg" id="fate-msg"></div><div class="count" id="fate-count"></div><div class="flash" id="fate-flash"></div></div>
+<div class="disc" id="disc" role="region" aria-label="音楽プレーヤー">
+  <button class="disc-rec" id="disc-rec" type="button" aria-label="次の曲へ"><img src="images/icon-hamu.jpg" alt=""></button>
+  <button class="disc-btn disc-play" id="disc-play" type="button" aria-label="音楽を再生">▶</button>
+  <button class="disc-btn disc-close" id="disc-close" type="button" aria-label="プレーヤーを閉じる">✕</button>
+  <span class="disc-name" id="disc-name"></span>
+</div>
+<script>
+/* 右下の音楽プレーヤー：▶で再生、レコードを押すと次の曲、✕で閉じる。ほかの音（紹介動画・クウの曲）とは同時に鳴らさない */
+(()=>{
+  const SONGS=[["Win Small, Lose Big","audio/win-small-lose-big.mp3"],["Who Wins Tomorrow?","audio/who-wins-tomorrow.mp3"],["Kuu's Fortune","audio/kuu-fortune.mp3"]];
+  const box=document.getElementById("disc"),play=document.getElementById("disc-play"),name=document.getElementById("disc-name");
+  const a=new Audio(); a.preload="none"; a.volume=.7; let i=0,tm;
+  try{if(sessionStorage.getItem("discClosed")==="1")box.hidden=true}catch(_){}
+  function load(){a.src=SONGS[i][1];name.textContent="♪ "+SONGS[i][0]}
+  function flash(){box.classList.add("show");clearTimeout(tm);tm=setTimeout(()=>box.classList.remove("show"),2500)}
+  function ui(){const on=!a.paused;box.classList.toggle("on",on);play.textContent=on?"Ⅱ":"▶";play.setAttribute("aria-label",on?"音楽を一時停止":"音楽を再生")}
+  function start(){if(!a.src)load();if(window.heroMute)window.heroMute();if(window.kuuStop)window.kuuStop();const p=a.play();if(p&&p.catch)p.catch(()=>{});flash()}
+  window.discStop=()=>a.pause();
+  play.addEventListener("click",()=>{a.paused?start():a.pause()});
+  document.getElementById("disc-rec").addEventListener("click",()=>{i=(i+1)%SONGS.length;load();start()});
+  document.getElementById("disc-close").addEventListener("click",()=>{a.pause();box.hidden=true;try{sessionStorage.setItem("discClosed","1")}catch(_){}});
+  a.addEventListener("ended",()=>{i=(i+1)%SONGS.length;load();start()});
+  a.addEventListener("play",ui);a.addEventListener("pause",ui);
+  load();
+})();
+</script>
 </body>
 </html>
