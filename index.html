@@ -172,10 +172,14 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 .hero-control.round{width:48px;height:48px;min-height:0;padding:0;border-radius:50%;gap:0}
 .hero-control.round .hero-control-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 #hero-toggle.round{position:relative;width:64px;height:64px;border:0;background:conic-gradient(var(--pink) calc(var(--p,0)*1turn),rgba(255,255,255,.35) 0);box-shadow:0 6px 18px rgba(0,0,0,.4)}
-#hero-toggle.round::before{content:"";position:absolute;inset:4px;border-radius:50%;background:url(images/icon-mugi.jpg) center/cover;filter:brightness(.75)}
+#hero-toggle.round::before{content:"";position:absolute;inset:4px;border-radius:50%;background:url(images/real-mugi.jpg) center/cover;filter:brightness(.8)}
 #hero-toggle.round .hero-symbol{position:relative;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(11,11,13,.82);font-size:.85rem}
 #hero-toggle.round:hover::before{filter:brightness(1)}
-@media (min-width:701px){.hero-toolbar{right:auto;left:max(18px,env(safe-area-inset-left,0px))}}  /* 右下は音楽プレーヤーがいるので、動画のボタンは左下 */
+@media (min-width:701px){.hero-toolbar{right:19px;bottom:auto;top:50%;transform:translateY(-50%);flex-direction:column;gap:12px}}  /* 本人：右側でそろえる。右下の音楽レコードと同じ縦の線に、縦に並べる */
+.hero-control.round#hero-sound{border:0;background:linear-gradient(135deg,#ff1f8f,#b44dff);box-shadow:0 0 0 3px rgba(255,255,255,.85),0 0 18px rgba(255,31,143,.7)}
+.hero-control.round#hero-fullscreen{border:0;background:linear-gradient(135deg,#19d3ff,#3a6bff);box-shadow:0 0 0 3px rgba(255,255,255,.85),0 0 18px rgba(25,211,255,.7)}
+.hero-control.round#hero-sound .hero-symbol,.hero-control.round#hero-fullscreen .hero-symbol{font-size:1.25rem;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.hero-control.round#hero-sound:hover,.hero-control.round#hero-fullscreen:hover{filter:brightness(1.15);transform:scale(1.06)}
 @media (max-width:700px){.hero-control.round{width:42px;height:42px}#hero-toggle.round{width:54px;height:54px}}
 /* 音楽プレーヤー（右下の回るレコード） */
 .disc{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:110;width:78px;height:78px}
@@ -862,7 +866,7 @@ fetch("data/today.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject
 <button class="kuu-sound" id="kuu-sound" type="button" hidden aria-pressed="true">🔇 曲を止める</button>
 <div class="fate" id="fate" hidden aria-live="assertive"><div class="orb"></div><div class="msg" id="fate-msg"></div><div class="count" id="fate-count"></div><div class="flash" id="fate-flash"></div></div>
 <div class="disc" id="disc" role="region" aria-label="音楽プレーヤー">
-  <button class="disc-rec" id="disc-rec" type="button" aria-label="次の曲へ"><img src="images/icon-hamu.jpg" alt=""></button>
+  <button class="disc-rec" id="disc-rec" type="button" aria-label="次の曲へ"><img src="images/real-hamu.jpg" alt=""></button>
   <button class="disc-btn disc-play" id="disc-play" type="button" aria-label="音楽を再生">▶</button>
   <button class="disc-btn disc-close" id="disc-close" type="button" aria-label="プレーヤーを閉じる">✕</button>
   <span class="disc-name" id="disc-name"></span>
