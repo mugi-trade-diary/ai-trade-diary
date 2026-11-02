@@ -1,0 +1,17 @@
+{
+  "mode": "draft_only",
+  "real_submit_allowed": false,
+  "approved_spend_jpy": 0,
+  "proposed_monthly_cap_jpy": 3000,
+  "proposed_daily_cap_jpy": 100,
+  "publish_allowed": false,
+  "billing_allowed": false,
+  "autopost_allowed": false,
+  "merge_allowed": false,
+  "products": [
+    {"id": "free", "name": "3行ふりかえりシート", "price_jpy": 0},
+    {"id": "journal", "name": "30日ふりかえりテンプレート", "price_jpy": 980},
+    {"id": "bundle", "name": "記録とふりかえりセット", "price_jpy": 2480},
+    {"id": "membership", "name": "月のふりかえり便", "price_jpy": 500}
+  ]
+}
