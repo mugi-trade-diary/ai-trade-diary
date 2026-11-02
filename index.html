@@ -168,6 +168,15 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 #step-result[hidden],#step-input[hidden],.fate[hidden]{display:none}
 .kuu-sound{position:fixed;right:104px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:120;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-size:.85rem;font-weight:700;color:#fff;background:rgba(40,12,52,.88);box-shadow:0 0 0 2px #ffd76a inset,0 4px 14px rgba(0,0,0,.35);cursor:pointer}
 .kuu-sound[hidden]{display:none}
+/* 紹介動画のボタン：右下の音楽と同じ丸型。再生ボタンはムギの顔＋進み具合のリング */
+.hero-control.round{width:48px;height:48px;min-height:0;padding:0;border-radius:50%;gap:0}
+.hero-control.round .hero-control-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#hero-toggle.round{position:relative;width:64px;height:64px;border:0;background:conic-gradient(var(--pink) calc(var(--p,0)*1turn),rgba(255,255,255,.35) 0);box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#hero-toggle.round::before{content:"";position:absolute;inset:4px;border-radius:50%;background:url(images/icon-mugi.jpg) center/cover;filter:brightness(.75)}
+#hero-toggle.round .hero-symbol{position:relative;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(11,11,13,.82);font-size:.85rem}
+#hero-toggle.round:hover::before{filter:brightness(1)}
+@media (min-width:701px){.hero-toolbar{right:auto;left:max(18px,env(safe-area-inset-left,0px))}}  /* 右下は音楽プレーヤーがいるので、動画のボタンは左下 */
+@media (max-width:700px){.hero-control.round{width:42px;height:42px}#hero-toggle.round{width:54px;height:54px}}
 /* 音楽プレーヤー（右下の回るレコード） */
 .disc{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:110;width:78px;height:78px}
 .disc[hidden]{display:none}
@@ -363,13 +372,13 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
       <p>ムギと3人の女性AIのトレード日記、動画、note、クウの足占いをご紹介します。</p>
     </video>
     <div class="hero-toolbar" id="hero-toolbar" hidden>
-      <button class="hero-control" id="hero-toggle" type="button" aria-controls="hero-promo" aria-label="紹介動画を再生">
+      <button class="hero-control round" id="hero-toggle" type="button" aria-controls="hero-promo" aria-label="紹介動画を再生">
         <span class="hero-symbol" id="hero-toggle-symbol" aria-hidden="true">▶</span><span class="hero-control-label" id="hero-toggle-label">再生</span>
       </button>
-      <button class="hero-control" id="hero-sound" type="button" aria-controls="hero-promo" aria-pressed="false" aria-label="音を出す">
+      <button class="hero-control round" id="hero-sound" type="button" aria-controls="hero-promo" aria-pressed="false" aria-label="音を出す">
         <span class="hero-symbol" id="hero-sound-symbol" aria-hidden="true">♪</span><span class="hero-control-label" id="hero-sound-label">音を出す</span>
       </button>
-      <button class="hero-control" id="hero-fullscreen" type="button" aria-controls="hero-promo" aria-label="紹介動画を全画面で見る" hidden>
+      <button class="hero-control round" id="hero-fullscreen" type="button" aria-controls="hero-promo" aria-label="紹介動画を全画面で見る" hidden>
         <span class="hero-symbol" aria-hidden="true">⛶</span><span class="hero-control-label">全画面</span>
       </button>
     </div>
@@ -589,6 +598,7 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
   });
   video.addEventListener("play",()=>{if(video.controls)wantsPlayback=true;showState()});
   video.addEventListener("pause",()=>{if(video.controls&&inView&&!document.hidden)wantsPlayback=false;showState()});
+  video.addEventListener("timeupdate",()=>{if(video.duration)toggle.style.setProperty("--p",(video.currentTime/video.duration).toFixed(3))});
   video.addEventListener("loadeddata",()=>{status.textContent="";syncPlayback()});
   video.addEventListener("error",()=>{
     failed=true;
