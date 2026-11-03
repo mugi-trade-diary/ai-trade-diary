@@ -36,9 +36,9 @@ nav a:hover{color:var(--pink)}
   nav a{font-size:.82rem;white-space:nowrap}
 }
 .hero{background:var(--black);color:var(--white);scroll-margin-top:80px}
-.hero-media{position:relative;width:100%;aspect-ratio:16/9;max-height:760px;overflow:hidden;background:#171116}
-.hero-video{display:block;width:100%;height:100%;object-fit:contain;background:#171116}
-.hero-toolbar{position:absolute;right:max(18px,env(safe-area-inset-right,0px));bottom:18px;display:flex;gap:8px;align-items:center}
+.hero-media{position:relative;width:100%;background:#171116}
+.hero-video{display:block;width:100%;aspect-ratio:16/9;max-height:760px;object-fit:contain;background:#171116}
+.hero-toolbar{display:flex;justify-content:flex-end;gap:12px;align-items:center;max-width:1280px;margin:0 auto;padding:12px max(18px,env(safe-area-inset-right,0px)) 0}  /* 本人：動画の字幕にかぶる → 動画の下・右側に並べる */
 .hero-toolbar[hidden]{display:none}
 .hero-control{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:1px solid rgba(255,255,255,.6);border-radius:999px;padding:9px 16px;background:rgba(11,11,13,.78);color:var(--white);font:inherit;font-size:.76rem;font-weight:700;cursor:pointer;backdrop-filter:blur(8px)}
 .hero-control:hover{background:var(--pink);border-color:var(--pink)}
