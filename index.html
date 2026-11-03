@@ -38,7 +38,7 @@ nav a:hover{color:var(--pink)}
 .hero{background:var(--black);color:var(--white);scroll-margin-top:80px}
 .hero-media{position:relative;width:100%;aspect-ratio:16/9;max-height:760px;overflow:hidden;background:#171116}
 .hero-video{display:block;width:100%;height:100%;object-fit:contain;background:#171116}
-.hero-toolbar{position:absolute;right:max(18px,env(safe-area-inset-right,0px));bottom:18px;display:flex;gap:8px;align-items:center}
+.hero-toolbar{position:absolute;left:max(18px,env(safe-area-inset-left,0px));bottom:18px;display:flex;gap:8px;align-items:center}
 .hero-toolbar[hidden]{display:none}
 .hero-control{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;border:1px solid rgba(255,255,255,.6);border-radius:999px;padding:9px 16px;background:rgba(11,11,13,.78);color:var(--white);font:inherit;font-size:.76rem;font-weight:700;cursor:pointer;backdrop-filter:blur(8px)}
 .hero-control:hover{background:var(--pink);border-color:var(--pink)}
@@ -65,11 +65,11 @@ nav a:hover{color:var(--pink)}
   /* スマホでは動画の上に重ねず、動画のすぐ下に並べる（字幕が隠れないように） */
   .hero-media{aspect-ratio:auto;max-height:none;overflow:visible}
   .hero-video{height:auto;aspect-ratio:16/9}
-  .hero-toolbar{position:static;justify-content:flex-end;gap:6px;padding:8px 12px 0}
-  .hero-control{min-height:36px;padding:6px 12px;font-size:.7rem}
+  .hero-toolbar{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:12px;padding:12px 16px 0}  /* 本人：スマホでくっつきすぎ→均等に広げて押しやすく */
+  .hero-control{min-height:46px;padding:8px 12px;font-size:.82rem;justify-content:center}
 }
 @media (max-width:420px){
-  .hero-control{min-height:40px;padding:6px 10px}
+  .hero-control{min-height:46px;padding:8px 8px}
 }
 .notice{max-width:1100px;margin:0 auto;color:var(--pink);font-size:.76rem;line-height:1.6;padding-block:14px 0}
 .notice b{display:block}
@@ -169,18 +169,6 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 .kuu-sound{position:fixed;right:104px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:120;border:0;border-radius:999px;padding:10px 16px;font:inherit;font-size:.85rem;font-weight:700;color:#fff;background:rgba(40,12,52,.88);box-shadow:0 0 0 2px #ffd76a inset,0 4px 14px rgba(0,0,0,.35);cursor:pointer}
 .kuu-sound[hidden]{display:none}
 /* 紹介動画のボタン：右下の音楽と同じ丸型。再生ボタンはムギの顔＋進み具合のリング */
-.hero-control.round{width:48px;height:48px;min-height:0;padding:0;border-radius:50%;gap:0}
-.hero-control.round .hero-control-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-#hero-toggle.round{position:relative;width:64px;height:64px;border:0;background:conic-gradient(var(--pink) calc(var(--p,0)*1turn),rgba(255,255,255,.35) 0);box-shadow:0 6px 18px rgba(0,0,0,.4)}
-#hero-toggle.round::before{content:"";position:absolute;inset:4px;border-radius:50%;background:url(images/icon-mugi.jpg) center/cover;filter:brightness(.8)}
-#hero-toggle.round .hero-symbol{position:relative;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:rgba(11,11,13,.82);font-size:.85rem}
-#hero-toggle.round:hover::before{filter:brightness(1)}
-@media (min-width:701px){.hero-toolbar{right:19px;bottom:auto;top:50%;transform:translateY(-50%);flex-direction:column;gap:12px}}  /* 本人：右側でそろえる。右下の音楽レコードと同じ縦の線に、縦に並べる */
-.hero-control.round#hero-sound{border:0;background:linear-gradient(135deg,#ff1f8f,#b44dff);box-shadow:0 0 0 3px rgba(255,255,255,.85),0 0 18px rgba(255,31,143,.7)}
-.hero-control.round#hero-fullscreen{border:0;background:linear-gradient(135deg,#19d3ff,#3a6bff);box-shadow:0 0 0 3px rgba(255,255,255,.85),0 0 18px rgba(25,211,255,.7)}
-.hero-control.round#hero-sound .hero-symbol,.hero-control.round#hero-fullscreen .hero-symbol{font-size:1.25rem;font-weight:800;text-shadow:0 1px 2px rgba(0,0,0,.35)}
-.hero-control.round#hero-sound:hover,.hero-control.round#hero-fullscreen:hover{filter:brightness(1.15);transform:scale(1.06)}
-@media (max-width:700px){.hero-control.round{width:42px;height:42px}#hero-toggle.round{width:54px;height:54px}}
 /* 音楽プレーヤー（右下の回るレコード） */
 .disc{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:110;width:78px;height:78px}
 .disc[hidden]{display:none}
@@ -376,13 +364,13 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
       <p>ムギと3人の女性AIのトレード日記、動画、note、クウの足占いをご紹介します。</p>
     </video>
     <div class="hero-toolbar" id="hero-toolbar" hidden>
-      <button class="hero-control round" id="hero-toggle" type="button" aria-controls="hero-promo" aria-label="紹介動画を再生">
+      <button class="hero-control" id="hero-toggle" type="button" aria-controls="hero-promo" aria-label="紹介動画を再生">
         <span class="hero-symbol" id="hero-toggle-symbol" aria-hidden="true">▶</span><span class="hero-control-label" id="hero-toggle-label">再生</span>
       </button>
-      <button class="hero-control round" id="hero-sound" type="button" aria-controls="hero-promo" aria-pressed="false" aria-label="音を出す">
+      <button class="hero-control" id="hero-sound" type="button" aria-controls="hero-promo" aria-pressed="false" aria-label="音を出す">
         <span class="hero-symbol" id="hero-sound-symbol" aria-hidden="true">♪</span><span class="hero-control-label" id="hero-sound-label">音を出す</span>
       </button>
-      <button class="hero-control round" id="hero-fullscreen" type="button" aria-controls="hero-promo" aria-label="紹介動画を全画面で見る" hidden>
+      <button class="hero-control" id="hero-fullscreen" type="button" aria-controls="hero-promo" aria-label="紹介動画を全画面で見る" hidden>
         <span class="hero-symbol" aria-hidden="true">⛶</span><span class="hero-control-label">全画面</span>
       </button>
     </div>
