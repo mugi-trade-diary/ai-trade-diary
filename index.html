@@ -442,7 +442,7 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
       </div>
       <p class="brake" id="rp-brake"></p>
       <div class="gpt" id="rp-gpt" hidden>
-        <div class="gpt-h" id="rp-gpt-h">GPT（市況メモ担当）より</div>
+        <div class="gpt-h" id="rp-gpt-h">AI市況メモ係より</div>
         <ul id="rp-gpt-list"></ul>
       </div>
       <p class="fine" id="rp-note"></p>
@@ -689,11 +689,11 @@ function renderReport(){
   if(an&&an.list&&an.list.length){
     $("rp-ana").hidden=false;
     $("rp-ana-count").textContent=`強気${an.count["強気"]}・弱気${an.count["弱気"]}・中立${an.count["中立"]}（${md(an.date)}）`;
-    $("rp-ana-list").innerHTML=an.list.map(a=>`<div class="an"><div class="an-top"><span class="st ${a.stance==="強気"?"bull":a.stance==="弱気"?"bear":""}">${esc(a.stance)}</span><b>${esc(a.name)}</b><span class="gr ${a.grade==="参考になる成績"?"ok":""}">${a.n!=null?`向きの的中 ${a.hits}/${a.n}・${esc(a.grade)}`:"成績なし"}</span><small>${esc(String(a.answered_at||"").slice(11,16))}</small></div>${a.why?`<div>${esc(a.why)}</div>`:""}${a.invalid_if?`<small>外れる合図：${esc(a.invalid_if)}</small>`:""}</div>`).join("");
+    $("rp-ana-list").innerHTML=an.list.map((a,i)=>`<div class="an"><div class="an-top"><span class="st ${a.stance==="強気"?"bull":a.stance==="弱気"?"bear":""}">${esc(a.stance)}</span><b>AIアナリスト${i+1}号</b><span class="gr ${a.grade==="参考になる成績"?"ok":""}">${a.n!=null?`向きの的中 ${a.hits}/${a.n}・${esc(a.grade)}`:"成績なし"}</span><small>${esc(String(a.answered_at||"").slice(11,16))}</small></div>${a.why?`<div>${esc(a.why)}</div>`:""}${a.invalid_if?`<small>外れる合図：${esc(a.invalid_if)}</small>`:""}</div>`).join("");
   } else $("rp-ana").hidden=true;
   $("rp-brake").textContent=d.base_rate?`先入観のブレーキ：${d.base_rate}`:"";
   $("rp-brake").hidden=!d.base_rate;
-  if(d.gpt_memo&&d.gpt_memo.length){$("rp-gpt").hidden=false;$("rp-gpt-h").textContent=`GPT（市況メモ担当）より・${md(d.gpt_date)}の報道まとめ`;$("rp-gpt-list").innerHTML=d.gpt_memo.map(x=>`<li>${esc(x.text)}${x.url?` <a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.source||"出典")}</a>`:""}</li>`).join("")}
+  if(d.gpt_memo&&d.gpt_memo.length){$("rp-gpt").hidden=false;$("rp-gpt-h").textContent=`AI市況メモ係より・${md(d.gpt_date)}の報道まとめ`;$("rp-gpt-list").innerHTML=d.gpt_memo.map(x=>`<li>${esc(x.text)}${x.url?` <a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.source||"出典")}</a>`:""}</li>`).join("")}
   else $("rp-gpt").hidden=true;
   $("rp-note").textContent=d.source_note||"";
 }
