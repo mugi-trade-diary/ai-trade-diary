@@ -172,6 +172,8 @@ footer p{margin:0;font-size:.8rem;color:#c9c4cc}
 /* 音楽プレーヤー（右下の回るレコード） */
 .disc{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:110;width:78px;height:78px}
 .disc[hidden]{display:none}
+.disc-open{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:110;width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;font:700 1rem/1 var(--body);color:#fff;background:rgba(11,11,13,.82);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.disc-open[hidden]{display:none}
 .disc-rec{width:78px;height:78px;border-radius:50%;border:0;padding:0;cursor:pointer;background:radial-gradient(circle,#111 0 30%,#2a2a2e 31% 33%,#111 34% 46%,#2a2a2e 47% 49%,#111 50% 100%);box-shadow:0 0 0 3px var(--pink),0 6px 18px rgba(0,0,0,.4);display:grid;place-items:center}
 .disc-rec img{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid #fff}
 .disc.on .disc-rec{animation:disc-spin 6s linear infinite}
@@ -859,13 +861,13 @@ fetch("data/today.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject
   <button class="disc-btn disc-close" id="disc-close" type="button" aria-label="プレーヤーを閉じる">✕</button>
   <span class="disc-name" id="disc-name"></span>
 </div>
+<button class="disc-open" id="disc-open" type="button" aria-label="音楽プレーヤーを出す" hidden>♪</button>
 <script>
 /* 右下の音楽プレーヤー：▶で再生、レコードを押すと次の曲、✕で閉じる。ほかの音（紹介動画・クウの曲）とは同時に鳴らさない */
 (()=>{
   const SONGS=[["Win Small, Lose Big","audio/win-small-lose-big.mp3"],["Who Wins Tomorrow?","audio/who-wins-tomorrow.mp3"],["Kuu's Fortune","audio/kuu-fortune.mp3"]];
   const box=document.getElementById("disc"),play=document.getElementById("disc-play"),name=document.getElementById("disc-name");
   const a=new Audio(); a.preload="none"; a.volume=.7; let i=0,tm;
-  try{if(sessionStorage.getItem("discClosed")==="1")box.hidden=true}catch(_){}
   function load(){a.src=SONGS[i][1];name.textContent="♪ "+SONGS[i][0]}
   function flash(){box.classList.add("show");clearTimeout(tm);tm=setTimeout(()=>box.classList.remove("show"),2500)}
   function ui(){const on=!a.paused;box.classList.toggle("on",on);play.textContent=on?"Ⅱ":"▶";play.setAttribute("aria-label",on?"音楽を一時停止":"音楽を再生")}
@@ -873,7 +875,9 @@ fetch("data/today.json",{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject
   window.discStop=()=>a.pause();
   play.addEventListener("click",()=>{a.paused?start():a.pause()});
   document.getElementById("disc-rec").addEventListener("click",()=>{i=(i+1)%SONGS.length;load();start()});
-  document.getElementById("disc-close").addEventListener("click",()=>{a.pause();box.hidden=true;try{sessionStorage.setItem("discClosed","1")}catch(_){}});
+  const reopen=document.getElementById("disc-open");
+  document.getElementById("disc-close").addEventListener("click",()=>{a.pause();box.hidden=true;reopen.hidden=false});
+  reopen.addEventListener("click",()=>{box.hidden=false;reopen.hidden=true});
   a.addEventListener("ended",()=>{i=(i+1)%SONGS.length;load();start()});
   a.addEventListener("play",ui);a.addEventListener("pause",ui);
   load();
